@@ -1,0 +1,23 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+}
+
+const { title = 'Sissi · Familien Yogazeit' } = Astro.props
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Sissi Familien Yogazeit – Yoga für Kinder, Familien, Schwangere und Senioren in Purkersdorf, Tullnerbach und Pressbaum." />
+    <link rel="icon" type="image/png" href="/logos/logo-circle.png" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

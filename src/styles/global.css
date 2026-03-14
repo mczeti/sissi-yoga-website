@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  /* Sissi Brand Colors */
+  --color-sissi-green: #8db33a;
+  --color-sissi-olive: #4a5240;
+  --color-sissi-circle: #596049;
+  --color-sissi-cream: #f9f6f0;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-sissi-cream);
+  color: var(--color-sissi-olive);
+}
