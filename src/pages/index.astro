@@ -3,10 +3,54 @@ import Layout from '../layouts/Layout.astro'
 ---
 
 <Layout>
-  <main class="min-h-screen flex items-center justify-center">
-    <div class="text-center">
-      <img src="/logos/logo-colored.png" alt="Sissi Familien Yogazeit" class="w-64 mx-auto mb-6" />
-      <p class="text-lg" style="color: var(--color-sissi-olive)">Website kommt bald</p>
+
+  <!-- HERO -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+    <!-- Background image -->
+    <div class="absolute inset-0">
+      <img
+        src="/images/Kinderyoga-64.JPG"
+        alt="Sissi Familien Yogazeit"
+        class="w-full h-full object-cover object-center"
+      />
+      <div class="absolute inset-0 bg-black/30"></div>
     </div>
-  </main>
+
+    <!-- Content -->
+    <div class="relative z-10 text-center px-6 flex flex-col items-center gap-6">
+      <img
+        src="/logos/logo-white.png"
+        alt="Sissi Familien Yogazeit"
+        class="w-56 md:w-72 drop-shadow-lg"
+      />
+
+      <p class="text-white text-lg md:text-xl font-light tracking-wide drop-shadow">
+        Purkersdorf · Tullnerbach · Pressbaum
+      </p>
+
+      <a
+        href="#termine"
+        class="mt-2 inline-block px-8 py-3 rounded-full text-white font-medium tracking-wide shadow-lg transition hover:scale-105"
+        style="background-color: var(--color-sissi-green)"
+      >
+        Aktuelle Termine
+      </a>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 animate-bounce">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
+
+  </section>
+
+  <!-- COMING SOON placeholder für nächste Sektionen -->
+  <section id="termine" class="py-24 px-6 text-center" style="background-color: var(--color-sissi-cream)">
+    <img src="/logos/logo-colored.png" alt="" class="w-40 mx-auto mb-6 opacity-30" />
+    <p class="text-lg" style="color: var(--color-sissi-olive)">Weitere Inhalte folgen bald …</p>
+  </section>
+
 </Layout>
