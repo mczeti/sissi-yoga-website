@@ -1,56 +1,168 @@
 ---
 import Layout from '../layouts/Layout.astro'
+
+const standorte = [
+  {
+    emoji: '🏡',
+    name: 'Purkersdorf',
+    kurse: ['Mama Baby Yoga', 'Senioren Yoga', 'Kinderyoga'],
+  },
+  {
+    emoji: '🌳',
+    name: 'Tullnerbach',
+    kurse: ['Yoga im Garten'],
+  },
+  {
+    emoji: '⛰️',
+    name: 'Pressbaum',
+    kurse: ['Vinyasa Yoga Flow (alle Level)', 'Schwangeren Yoga'],
+  },
+  {
+    emoji: '🚗',
+    name: 'Mobil',
+    kurse: ['Kindergärten', 'Schulen'],
+    link: { label: 'Mehr erfahren →', href: '#schulen' },
+  },
+]
 ---
 
 <Layout>
 
   <!-- HERO -->
-  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <section class="min-h-screen flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16" style="background-color: var(--color-sissi-cream)">
+    <div class="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center gap-12">
 
-    <!-- Background image -->
-    <div class="absolute inset-0">
-      <img
-        src="/images/Kinderyoga-64.JPG"
-        alt="Sissi Familien Yogazeit"
-        class="w-full h-full object-cover object-center"
-      />
-      <div class="absolute inset-0 bg-black/30"></div>
+      <!-- Left: Text -->
+      <div class="flex-1 flex flex-col gap-6">
+        <img
+          src="/logos/logo-colored.png"
+          alt="Sissi Familien Yogazeit"
+          class="w-56 md:w-72"
+        />
+
+        <p class="text-lg leading-relaxed max-w-sm" style="color: var(--color-sissi-olive)">
+          Yoga für die ganze Familie – von den Kleinsten bis zu den Großen. Entdecke deine innere Balance.
+        </p>
+
+        <div class="flex items-center gap-2 text-sm" style="color: var(--color-sissi-olive)">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>Lawieserstraße 34C / 3, 3013 Tullnerbach</span>
+        </div>
+      </div>
+
+      <!-- Right: Image card -->
+      <div class="flex-1 relative flex justify-center">
+        <div class="relative w-full max-w-sm">
+          <img
+            src="/images/Kinderyoga-64.JPG"
+            alt="Sissi beim Kinderyoga"
+            class="w-full rounded-3xl object-cover shadow-xl"
+            style="aspect-ratio: 4/5;"
+          />
+          <!-- Floating badge -->
+          <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
+            <span class="text-2xl">🧘</span>
+            <div>
+              <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">Kinder & Erwachsene</p>
+              <p class="text-xs" style="color: var(--color-sissi-circle)">Alle Level willkommen</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Content -->
-    <div class="relative z-10 text-center px-6 flex flex-col items-center gap-6">
-      <img
-        src="/logos/logo-white.png"
-        alt="Sissi Familien Yogazeit"
-        class="w-56 md:w-72 drop-shadow-lg"
-      />
-
-      <p class="text-white text-lg md:text-xl font-light tracking-wide drop-shadow">
-        Purkersdorf · Tullnerbach · Pressbaum
-      </p>
-
+    <!-- CTA Button -->
+    <div class="flex justify-center mt-16">
       <a
         href="#termine"
-        class="mt-2 inline-block px-8 py-3 rounded-full text-white font-medium tracking-wide shadow-lg transition hover:scale-105"
-        style="background-color: var(--color-sissi-green)"
+        class="inline-flex items-center gap-3 px-10 py-4 rounded-full text-white font-medium text-lg shadow-lg transition hover:scale-105 hover:shadow-xl"
+        style="background-color: var(--color-sissi-olive)"
       >
-        Aktuelle Termine
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Wöchentliche Termine
       </a>
     </div>
+  </section>
 
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 animate-bounce">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
+  <!-- STANDORTE -->
+  <section id="termine" class="py-20 px-8 md:px-16 bg-white">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="text-center mb-12">
+        <p class="text-xs font-bold tracking-widest uppercase mb-2" style="color: var(--color-sissi-green)">Unsere Standorte</p>
+        <h2 class="text-4xl font-light" style="color: var(--color-sissi-olive)">Yoga in deiner Nähe</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {standorte.map((ort) => (
+          <div class="rounded-2xl p-6 flex flex-col gap-4" style="background-color: var(--color-sissi-cream)">
+            <span class="text-3xl">{ort.emoji}</span>
+            <div class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span class="font-semibold" style="color: var(--color-sissi-olive)">{ort.name}</span>
+            </div>
+            <ul class="flex flex-col gap-1.5">
+              {ort.kurse.map((kurs) => (
+                <li class="flex items-center gap-2 text-sm" style="color: var(--color-sissi-circle)">
+                  <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: var(--color-sissi-green)"></span>
+                  {kurs}
+                </li>
+              ))}
+            </ul>
+            {ort.link && (
+              <a href={ort.link.href} class="text-sm font-medium mt-auto" style="color: var(--color-sissi-green)">
+                {ort.link.label}
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="px-8 md:px-16 py-10" style="background-color: var(--color-sissi-olive)">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+
+      <!-- Left: Logo + name -->
+      <div class="flex items-center gap-4">
+        <img src="/logos/logo-circle.png" alt="Sissi" class="w-14 h-14 rounded-full" />
+        <div>
+          <p class="font-semibold text-white">Sissi – Familien Yogazeit</p>
+          <p class="text-sm" style="color: rgba(255,255,255,0.6)">Yoga für die ganze Familie</p>
+        </div>
+      </div>
+
+      <!-- Right: Contact -->
+      <div class="flex items-center gap-6 text-sm text-white">
+        <a href="mailto:kontakt@sissiyoga.at" class="flex items-center gap-2 opacity-80 hover:opacity-100 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          kontakt@sissiyoga.at
+        </a>
+        <a href="https://www.instagram.com/sissi.familien.yogazeit" target="_blank" class="flex items-center gap-2 opacity-80 hover:opacity-100 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          @sissi.familien.yogazeit
+        </a>
+      </div>
+
     </div>
 
-  </section>
-
-  <!-- COMING SOON placeholder für nächste Sektionen -->
-  <section id="termine" class="py-24 px-6 text-center" style="background-color: var(--color-sissi-cream)">
-    <img src="/logos/logo-colored.png" alt="" class="w-40 mx-auto mb-6 opacity-30" />
-    <p class="text-lg" style="color: var(--color-sissi-olive)">Weitere Inhalte folgen bald …</p>
-  </section>
+    <div class="max-w-6xl mx-auto mt-8 pt-6 border-t border-white/10 text-center text-sm" style="color: rgba(255,255,255,0.4)">
+      © 2026 Sissi Yoga. Mit ❤️ gemacht.
+    </div>
+  </footer>
 
 </Layout>
