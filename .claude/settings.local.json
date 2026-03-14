@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm create:*)",
+      "Bash(mkdir -p /tmp/astro-tmp)",
+      "Read(//tmp/**)",
+      "Bash(cp:*)",
+      "Bash(npx astro:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)"
     ]
   }
 }
