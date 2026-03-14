@@ -1,6 +1,10 @@
 ---
 const { blok } = Astro.props
-// blok.titel, blok.gueltig_ab, blok.bild (Storyblok asset)
+// blok.titel, blok.gueltig_ab (ISO datetime), blok.bild (Storyblok asset)
+
+const datum = blok.gueltig_ab
+  ? new Date(blok.gueltig_ab).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' })
+  : null
 ---
 
 <div class="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-white">
@@ -17,8 +21,8 @@ const { blok } = Astro.props
     {blok.titel && (
       <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{blok.titel}</p>
     )}
-    {blok.gueltig_ab && (
-      <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {blok.gueltig_ab}</p>
+    {datum && (
+      <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {datum}</p>
     )}
   </div>
 </div>

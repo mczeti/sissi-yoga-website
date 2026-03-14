@@ -163,7 +163,7 @@ const standorte = [
               )}
               <div class="p-4">
                 {f.titel && <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{f.titel}</p>}
-                {f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {f.gueltig_ab}</p>}
+                {f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {new Date(f.gueltig_ab).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
               </div>
             </div>
           ))}
