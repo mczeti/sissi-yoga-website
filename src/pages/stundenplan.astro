@@ -1,0 +1,103 @@
+---
+import SubpageLayout from '../layouts/SubpageLayout.astro'
+import { useStoryblokApi } from '@storyblok/astro'
+
+// Alle Flyer laden
+let flyer: any[] = []
+try {
+  const api = useStoryblokApi()
+  const { data } = await api.get('cdn/stories', {
+    content_type: 'flyer',
+    sort_by: 'content.gueltig_ab:asc',
+    version: import.meta.env.DEV ? 'draft' : 'published',
+  })
+  flyer = data.stories.map((s: any) => s.content)
+} catch (e) {}
+
+const GOOGLE_CALENDAR_EMBED = import.meta.env.GOOGLE_CALENDAR_EMBED ?? ''
+---
+
+<SubpageLayout title="Stundenplan">
+
+  <div class="flex flex-col gap-16">
+
+    <!-- Google Calendar -->
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center gap-3 mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color: var(--color-sissi-green)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <h2 class="text-xl font-medium" style="color: var(--color-sissi-olive)">Wöchentliche Termine</h2>
+      </div>
+
+      {GOOGLE_CALENDAR_EMBED ? (
+        <div class="rounded-2xl overflow-hidden shadow-md" style="background-color: var(--color-sissi-cream)">
+          <iframe
+            src={GOOGLE_CALENDAR_EMBED}
+            style="border: 0; width: 100%; height: 600px;"
+            frameborder="0"
+            scrolling="no"
+          ></iframe>
+        </div>
+      ) : (
+        <div class="rounded-2xl p-12 text-center flex flex-col items-center gap-3" style="background-color: var(--color-sissi-cream)">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 opacity-30" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <p class="font-medium" style="color: var(--color-sissi-olive)">Kalender folgt in Kürze</p>
+          <p class="text-sm opacity-60" style="color: var(--color-sissi-olive)">Für aktuelle Termine einfach anfragen</p>
+          <a href="/kontakt" class="mt-2 inline-flex px-6 py-2 rounded-full text-white text-sm font-medium transition hover:scale-105"
+             style="background-color: var(--color-sissi-olive)">
+            Kontakt aufnehmen
+          </a>
+        </div>
+      )}
+    </div>
+
+    <!-- Aktuelle Flyer -->
+    {flyer.length > 0 && (
+      <div class="flex flex-col gap-6">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color: var(--color-sissi-green)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h2 class="text-xl font-medium" style="color: var(--color-sissi-olive)">Aktuelle Flyer</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {flyer.map((f) => (
+            <div class="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-white">
+              {f.bild?.filename && (() => {
+                const isPdf = f.bild.filename.endsWith('.pdf')
+                return isPdf ? (
+                  <a href={f.bild.filename} target="_blank" rel="noopener"
+                     class="flex flex-col items-center justify-center gap-3 p-10"
+                     style="background-color: var(--color-sissi-cream)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-40" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
+                  </a>
+                ) : (
+                  <a href={f.bild.filename} target="_blank" rel="noopener">
+                    <img src={f.bild.filename} alt={f.titel ?? 'Flyer'} class="w-full object-cover" />
+                  </a>
+                )
+              })()}
+              <div class="p-4">
+                {f.titel && <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{f.titel}</p>}
+                {f.gueltig_ab && (
+                  <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">
+                    Ab {new Date(f.gueltig_ab).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+
+</SubpageLayout>
