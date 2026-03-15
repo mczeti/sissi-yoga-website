@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro'
 import { useStoryblokApi } from '@storyblok/astro'
+import Stundenplan from '../components/Stundenplan.astro'
 
 // Flyer aus Storyblok laden
 let flyer: any[] = []
@@ -69,7 +70,7 @@ const standorte = [
       </div>
 
       <a
-        href="/stundenplan"
+        href="/#stundenplan"
         class="mt-2 inline-flex items-center gap-3 px-8 py-3 rounded-full text-white font-medium shadow-lg transition hover:scale-105"
         style="background-color: var(--color-sissi-olive)"
       >
@@ -168,6 +169,17 @@ const standorte = [
           Termine folgen in Kürze …
         </p>
       )}
+    </div>
+  </section>
+
+  <!-- STUNDENPLAN -->
+  <section id="stundenplan" class="py-20 px-8 md:px-16 bg-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <p class="text-xs font-bold tracking-widest uppercase mb-2" style="color: var(--color-sissi-green)">Wöchentlich</p>
+        <h2 class="text-4xl font-light" style="color: var(--color-sissi-olive)">Stundenplan</h2>
+      </div>
+      <Stundenplan />
     </div>
   </section>
 

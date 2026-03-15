@@ -1,0 +1,166 @@
+---
+// Kalender-Konfiguration – wird via .env befüllt wenn API Key vorhanden
+const CALENDAR_ID = import.meta.env.GOOGLE_CALENDAR_ID ?? ''
+const API_KEY     = import.meta.env.GOOGLE_API_KEY ?? ''
+const hasConfig   = CALENDAR_ID && API_KEY
+---
+
+<!-- Stundenplan Container -->
+<div id="stundenplan" class="flex flex-col gap-6">
+
+  <!-- Lade-Zustand -->
+  <div id="sp-loading" class="flex items-center justify-center py-16 gap-3" style="color: var(--color-sissi-circle)">
+    <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+    </svg>
+    <span class="text-sm">Termine werden geladen …</span>
+  </div>
+
+  <!-- Termine werden hier per JS eingefügt -->
+  <div id="sp-content" class="hidden flex flex-col gap-8"></div>
+
+  <!-- Fehler / Platzhalter -->
+  <div id="sp-empty" class="hidden rounded-2xl p-12 text-center" style="background-color: var(--color-sissi-cream)">
+    <p class="font-medium mb-1" style="color: var(--color-sissi-olive)">Keine Termine gefunden</p>
+    <p class="text-sm opacity-60" style="color: var(--color-sissi-olive)">Für aktuelle Termine bitte <a href="/kontakt" class="underline">anfragen</a>.</p>
+  </div>
+
+</div>
+
+<script define:vars={{ CALENDAR_ID, API_KEY, hasConfig }}>
+
+// --- Beispieldaten (solange kein API Key vorhanden) ---
+const MOCK_EVENTS = [
+  { summary: 'Kinderyoga',        location: 'Purkersdorf',  start: offsetDay(1, '09:00'), end: offsetDay(1, '10:00') },
+  { summary: 'Senioren Yoga',     location: 'Purkersdorf',  start: offsetDay(1, '11:00'), end: offsetDay(1, '12:00') },
+  { summary: 'Mama Baby Yoga',    location: 'Purkersdorf',  start: offsetDay(2, '09:30'), end: offsetDay(2, '10:30') },
+  { summary: 'Vinyasa Flow',      location: 'Pressbaum',    start: offsetDay(3, '18:00'), end: offsetDay(3, '19:15') },
+  { summary: 'Schwangeren Yoga',  location: 'Pressbaum',    start: offsetDay(4, '10:00'), end: offsetDay(4, '11:00') },
+  { summary: 'Yoga im Garten',    location: 'Tullnerbach',  start: offsetDay(5, '10:00'), end: offsetDay(5, '11:30') },
+  { summary: 'Kinderyoga',        location: 'Purkersdorf',  start: offsetDay(8, '09:00'), end: offsetDay(8, '10:00') },
+  { summary: 'Vinyasa Flow',      location: 'Pressbaum',    start: offsetDay(10, '18:00'), end: offsetDay(10, '19:15') },
+]
+
+function offsetDay(days, time) {
+  const d = new Date()
+  d.setDate(d.getDate() + days)
+  const [h, m] = time.split(':')
+  d.setHours(parseInt(h), parseInt(m), 0, 0)
+  return d.toISOString()
+}
+
+// Farbe pro Kurstyp
+const COLORS = {
+  'Kinderyoga':       { bg: '#eef4e1', text: '#5a7a1a' },
+  'Senioren Yoga':    { bg: '#e8f0e8', text: '#3d5c3d' },
+  'Mama Baby Yoga':   { bg: '#fdf0e8', text: '#8a5a2a' },
+  'Vinyasa Flow':     { bg: '#e8eef4', text: '#2a4a6a' },
+  'Schwangeren Yoga': { bg: '#f4e8f0', text: '#6a2a5a' },
+  'Yoga im Garten':   { bg: '#edf4e8', text: '#3a6a2a' },
+}
+
+function getColor(summary) {
+  for (const [key, val] of Object.entries(COLORS)) {
+    if (summary?.includes(key.split(' ')[0])) return val
+  }
+  return { bg: 'var(--color-sissi-cream)', text: 'var(--color-sissi-olive)' }
+}
+
+function formatTime(iso) {
+  return new Date(iso).toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })
+}
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('de-AT', { weekday: 'long', day: 'numeric', month: 'long' })
+}
+
+function groupByDay(events) {
+  const groups = {}
+  for (const ev of events) {
+    const key = new Date(ev.start.dateTime ?? ev.start).toDateString()
+    if (!groups[key]) groups[key] = { label: formatDate(ev.start.dateTime ?? ev.start), events: [] }
+    groups[key].events.push(ev)
+  }
+  return Object.values(groups)
+}
+
+function renderEvent(ev) {
+  const start = ev.start.dateTime ?? ev.start
+  const end   = ev.end?.dateTime ?? ev.end
+  const color = getColor(ev.summary)
+  return `
+    <div class="flex items-center gap-4 p-4 rounded-xl" style="background-color: ${color.bg}">
+      <div class="text-center shrink-0 w-14">
+        <p class="text-lg font-semibold leading-none" style="color: ${color.text}">${formatTime(start)}</p>
+        ${end ? `<p class="text-xs opacity-60 mt-0.5" style="color: ${color.text}">${formatTime(end)}</p>` : ''}
+      </div>
+      <div class="w-px h-10 rounded-full opacity-20" style="background-color: ${color.text}"></div>
+      <div class="flex-1">
+        <p class="font-semibold text-sm" style="color: ${color.text}">${ev.summary ?? ''}</p>
+        ${ev.location ? `<p class="text-xs mt-0.5 flex items-center gap-1 opacity-70" style="color: ${color.text}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          ${ev.location}
+        </p>` : ''}
+      </div>
+    </div>
+  `
+}
+
+function renderGroups(groups) {
+  return groups.map(g => `
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full" style="background-color: var(--color-sissi-green)"></div>
+        <h3 class="font-semibold text-base capitalize" style="color: var(--color-sissi-olive)">${g.label}</h3>
+      </div>
+      <div class="flex flex-col gap-2 pl-5">${g.events.map(renderEvent).join('')}</div>
+    </div>
+  `).join('')
+}
+
+async function load() {
+  const loading = document.getElementById('sp-loading')
+  const content = document.getElementById('sp-content')
+  const empty   = document.getElementById('sp-empty')
+
+  let events = []
+
+  if (hasConfig) {
+    try {
+      const now = new Date().toISOString()
+      const max = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${API_KEY}&timeMin=${now}&timeMax=${max}&singleEvents=true&orderBy=startTime&maxResults=50`
+      const res  = await fetch(url)
+      const data = await res.json()
+      events = data.items ?? []
+    } catch (e) {
+      events = []
+    }
+  } else {
+    // Beispieldaten mit normalisiertem Format
+    events = MOCK_EVENTS.map(e => ({
+      summary:  e.summary,
+      location: e.location,
+      start:    { dateTime: e.start },
+      end:      { dateTime: e.end },
+    }))
+  }
+
+  loading?.classList.add('hidden')
+
+  if (events.length === 0) {
+    empty?.classList.remove('hidden')
+    return
+  }
+
+  const groups = groupByDay(events)
+  if (content) {
+    content.innerHTML = renderGroups(groups)
+    content.classList.remove('hidden')
+    content.classList.add('flex', 'flex-col', 'gap-8')
+  }
+}
+
+load()
+</script>
