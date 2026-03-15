@@ -1,0 +1,36 @@
+---
+import SubpageLayout from '../layouts/SubpageLayout.astro'
+---
+
+<SubpageLayout title="Senioren Yoga" hero="/images/Kinderyoga-48.JPG" heroAlt="Senioren Yoga">
+
+  <div class="grid md:grid-cols-2 gap-12 items-start">
+
+    <div class="flex flex-col gap-6 text-base leading-relaxed" style="color: var(--color-sissi-olive)">
+      <p>
+        Yoga ist für jedes Alter geeignet – und gerade im Seniorenalter bietet es besonders viele Vorteile. Sanfte Bewegung, Atemübungen und Entspannung helfen dabei, Körper und Geist in Balance zu halten.
+      </p>
+      <p>
+        Im Mittelpunkt stehen Übungen zur Stärkung der Muskeln, Verbesserung der Beweglichkeit und Förderung der Koordination – alles angepasst an die individuellen Bedürfnisse der Teilnehmer:innen.
+      </p>
+      <p>
+        Die Stunden finden in Purkersdorf statt und sind für Einsteiger:innen wie auch für Erfahrene geeignet. Ein Stuhl steht immer als Hilfsmittel zur Verfügung.
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-6">
+      <img src="/images/Kinderyoga-10.JPG" alt="Senioren Yoga" class="w-full rounded-2xl object-cover shadow-md" />
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="mt-12 p-8 rounded-2xl text-center" style="background-color: var(--color-sissi-cream)">
+    <p class="text-lg mb-4" style="color: var(--color-sissi-olive)">Interesse an Senioren Yoga?</p>
+    <a href="/kontakt" class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-white font-medium transition hover:scale-105"
+       style="background-color: var(--color-sissi-olive)">
+      Jetzt anfragen
+    </a>
+  </div>
+
+</SubpageLayout>
