@@ -44,15 +44,15 @@ const standorte = [
 <Layout>
 
   <!-- HERO -->
-  <section class="min-h-screen flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16" style="background-color: var(--color-sissi-cream)">
-    <div class="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center gap-12">
+  <section class="flex flex-col justify-center px-6 md:px-16 lg:px-24 pt-10 pb-8 md:min-h-screen md:py-16" style="background-color: var(--color-sissi-cream)">
+    <div class="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center gap-8 md:gap-12">
 
       <!-- Left: Text -->
-      <div class="flex-1 flex flex-col gap-6">
+      <div class="flex-1 flex flex-col gap-4 md:gap-6 items-center md:items-start text-center md:text-left">
         <img
           src="/logos/logo-colored.png"
           alt="Sissi Familien Yogazeit"
-          class="w-56 md:w-72"
+          class="w-48 md:w-72"
         />
 
         <p class="text-lg leading-relaxed max-w-sm" style="color: var(--color-sissi-olive)">
@@ -69,16 +69,16 @@ const standorte = [
       </div>
 
       <!-- Right: Image card -->
-      <div class="flex-1 relative flex justify-center">
+      <div class="flex-1 relative flex justify-center w-full">
         <div class="relative w-full max-w-sm">
           <img
             src="/images/Kinderyoga-64.JPG"
             alt="Sissi beim Kinderyoga"
             class="w-full rounded-3xl object-cover shadow-xl"
-            style="aspect-ratio: 4/5;"
+            style="aspect-ratio: 4/5; max-height: 420px;"
           />
-          <!-- Floating badge -->
-          <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
+          <!-- Floating badge – nur auf md+ sichtbar -->
+          <div class="hidden md:flex absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 items-center gap-3">
             <span class="text-2xl">🧘</span>
             <div>
               <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">Kinder & Erwachsene</p>
@@ -91,7 +91,7 @@ const standorte = [
     </div>
 
     <!-- CTA Button -->
-    <div class="flex justify-center mt-16">
+    <div class="flex justify-center mt-8 md:mt-16">
       <a
         href="#termine"
         class="inline-flex items-center gap-3 px-10 py-4 rounded-full text-white font-medium text-lg shadow-lg transition hover:scale-105 hover:shadow-xl"
@@ -202,7 +202,7 @@ const standorte = [
       </div>
 
       <!-- Right: Contact -->
-      <div class="flex items-center gap-6 text-sm text-white">
+      <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-sm text-white">
         <a href="mailto:sissi.zehetner@gmail.com" class="flex items-center gap-2 opacity-80 hover:opacity-100 transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
