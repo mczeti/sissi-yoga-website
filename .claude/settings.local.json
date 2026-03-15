@@ -8,7 +8,8 @@
       "Bash(cp:*)",
       "Bash(npx astro:*)",
       "Bash(npm install:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(node:*)"
     ]
   }
 }
