@@ -19,25 +19,29 @@ try {
 
 const standorte = [
   {
-    emoji: '🏡',
     name: 'Purkersdorf',
     kurse: ['Mama Baby Yoga', 'Senioren Yoga', 'Kinderyoga'],
+    foto: null,
+    fotoPosition: 'center center',
   },
   {
-    emoji: '🌳',
     name: 'Tullnerbach',
     kurse: ['Yoga im Garten'],
+    foto: '/images/standort-tullnerbach.jpg',
+    fotoPosition: 'center center',
   },
   {
-    emoji: '⛰️',
     name: 'Pressbaum',
     kurse: ['Vinyasa Yoga Flow (alle Level)', 'Schwangeren Yoga'],
+    foto: '/images/standort-pressbaum.jpg',
+    fotoPosition: 'center 40%',
   },
   {
-    emoji: '🚗',
     name: 'Mobil',
     kurse: ['Kindergärten', 'Schulen'],
-    link: { label: 'Mehr erfahren →', href: '#schulen' },
+    foto: '/images/standort-mobil.jpg',
+    fotoPosition: 'center center',
+    link: { label: 'Mehr erfahren', href: '/schulen' },
   },
 ]
 ---
@@ -99,29 +103,71 @@ const standorte = [
         <h2 class="text-4xl font-light" style="color: var(--color-sissi-olive)">Yoga in deiner Nähe</h2>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {standorte.map((ort) => (
-          <div class="rounded-2xl p-6 flex flex-col gap-4" style="background-color: var(--color-sissi-cream)">
-            <div class="flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span class="font-semibold" style="color: var(--color-sissi-olive)">{ort.name}</span>
-            </div>
-            <ul class="flex flex-col gap-1.5">
-              {ort.kurse.map((kurs) => (
-                <li class="flex items-center gap-2 text-sm" style="color: var(--color-sissi-circle)">
-                  <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: var(--color-sissi-green)"></span>
-                  {kurs}
-                </li>
-              ))}
-            </ul>
-            {ort.link && (
-              <a href={ort.link.href} class="text-sm font-medium mt-auto" style="color: var(--color-sissi-green)">
-                {ort.link.label}
-              </a>
+          <div class="standort-card group relative rounded-2xl overflow-hidden" style="height: 380px;">
+
+            <!-- Foto oder Platzhalter -->
+            {ort.foto ? (
+              <>
+                <img
+                  src={ort.foto}
+                  alt={ort.name}
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  style={`object-position: ${ort.fotoPosition}`}
+                />
+                <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(74,82,64,0.15) 0%, rgba(74,82,64,0.0) 35%, rgba(74,82,64,0.75) 70%, rgba(74,82,64,0.95) 100%)"></div>
+              </>
+            ) : (
+              <>
+                <div class="absolute inset-0" style="background-color: var(--color-sissi-cream)"></div>
+                <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(74,82,64,0.05) 0%, rgba(74,82,64,0.0) 35%, rgba(74,82,64,0.4) 70%, rgba(74,82,64,0.65) 100%)"></div>
+              </>
             )}
+
+            <!-- Top: Standort-Name -->
+            <div class="absolute top-0 left-0 right-0 p-5 flex items-center gap-2">
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                style={ort.foto
+                  ? "background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"
+                  : "background: rgba(74,82,64,0.10);"}>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" style={ort.foto ? "color: white" : "color: var(--color-sissi-olive)"} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="text-sm font-semibold" style={ort.foto ? "color: white" : "color: var(--color-sissi-olive)"}>{ort.name}</span>
+              </div>
+            </div>
+
+            <!-- Bottom: Kurse + optionaler Link -->
+            <div class="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-2">
+              <ul class="flex flex-col gap-1.5">
+                {ort.kurse.map((kurs) => (
+                  <li class="flex items-center gap-2 text-sm" style={ort.foto ? "color: rgba(255,255,255,0.9)" : "color: var(--color-sissi-circle)"}>
+                    <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: var(--color-sissi-green)"></span>
+                    {kurs}
+                  </li>
+                ))}
+              </ul>
+              {ort.link && (
+                <a
+                  href={ort.link.href}
+                  class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+                  style={ort.foto ? "color: rgba(255,255,255,0.8)" : "color: var(--color-sissi-green)"}
+                >
+                  {ort.link.label}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              )}
+            </div>
+
           </div>
         ))}
       </div>
@@ -220,8 +266,12 @@ const standorte = [
 
     </div>
 
-    <div class="max-w-6xl mx-auto mt-8 pt-6 border-t border-white/10 text-center text-sm" style="color: rgba(255,255,255,0.4)">
-      © 2026 Sissi Yoga. Mit ❤️ gemacht.
+    <div class="max-w-6xl mx-auto mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm" style="color: rgba(255,255,255,0.4)">
+      <span>© 2026 Sissi – Familien Yogazeit</span>
+      <div class="flex gap-5">
+        <a href="/impressum" class="hover:text-white/70 transition">Impressum</a>
+        <a href="/datenschutz" class="hover:text-white/70 transition">Datenschutz</a>
+      </div>
     </div>
   </footer>
 
