@@ -9,8 +9,8 @@ try {
   const storyblokApi = useStoryblokApi()
   const { data } = await storyblokApi.get('cdn/stories', {
     content_type: 'flyer',
-    sort_by: 'content.gueltig_ab:desc',
-    version: import.meta.env.DEV ? 'draft' : 'published',
+    sort_by: 'content.gueltig_ab:asc',
+    version: 'published',
   })
   flyer = data.stories.map((s: any) => s.content)
 } catch (e) {

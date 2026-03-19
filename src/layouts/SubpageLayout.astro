@@ -5,9 +5,11 @@ interface Props {
   title: string
   hero?: string
   heroAlt?: string
+  heroPosition?: string
+  heroFit?: 'cover' | 'contain'
 }
 
-const { title, hero, heroAlt } = Astro.props
+const { title, hero, heroAlt, heroPosition = 'center center', heroFit = 'cover' } = Astro.props
 ---
 
 <Layout title={`${title} · Sissi Familien Yogazeit`}>
@@ -15,7 +17,7 @@ const { title, hero, heroAlt } = Astro.props
   <!-- Hero Bild -->
   {hero && (
     <div class="relative h-64 md:h-96 overflow-hidden pt-16">
-      <img src={hero} alt={heroAlt ?? title} class="w-full h-full object-cover object-center" />
+      <img src={hero} alt={heroAlt ?? title} class={`w-full h-full ${heroFit === 'contain' ? 'object-contain' : 'object-cover'}`} style={`object-position: ${heroPosition}; background-color: #2a2a1e`} />
       <div class="absolute inset-0 bg-black/25"></div>
       <div class="absolute inset-0 flex items-end justify-start px-8 md:px-16 pb-8">
         <h1 class="text-3xl md:text-5xl font-light text-white drop-shadow">{title}</h1>
