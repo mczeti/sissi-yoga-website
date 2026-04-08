@@ -1,8 +1,5 @@
 ---
-// Kalender-Konfiguration – wird via .env befüllt wenn API Key vorhanden
-const CALENDAR_ID = import.meta.env.GOOGLE_CALENDAR_ID ?? ''
-const API_KEY     = import.meta.env.GOOGLE_API_KEY ?? ''
-const hasConfig   = CALENDAR_ID && API_KEY
+// Kalender wird über /api/calendar (Netlify Function) geladen – kein Key im Client
 ---
 
 <!-- Stundenplan Container -->
@@ -28,7 +25,7 @@ const hasConfig   = CALENDAR_ID && API_KEY
 
 </div>
 
-<script define:vars={{ CALENDAR_ID, API_KEY, hasConfig }}>
+<script>
 
 // --- Beispieldaten (solange kein API Key vorhanden) ---
 const MOCK_EVENTS = [
@@ -126,19 +123,18 @@ async function load() {
 
   let events = []
 
-  if (hasConfig) {
-    try {
-      const now = new Date().toISOString()
-      const max = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${API_KEY}&timeMin=${now}&timeMax=${max}&singleEvents=true&orderBy=startTime&maxResults=50`
-      const res  = await fetch(url)
-      const data = await res.json()
-      events = data.items ?? []
-    } catch (e) {
-      events = []
-    }
-  } else {
-    // Beispieldaten mit normalisiertem Format
+  let configured = false
+  try {
+    const res  = await fetch('/api/calendar')
+    const data = await res.json()
+    events = data.items ?? []
+    configured = data.configured ?? false
+  } catch (e) {
+    events = []
+  }
+
+  // Fallback auf Beispieldaten wenn kein API Key konfiguriert (lokale Entwicklung)
+  if (!configured) {
     events = MOCK_EVENTS.map(e => ({
       summary:  e.summary,
       location: e.location,
