@@ -114,17 +114,20 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
 
     <div class="flex flex-col gap-4 max-w-2xl mx-auto">
       {[
-        { jahr: '2024', titel: 'Schwangeren- & Postnatal-Yoga', info: 'Zertifizierte Ausbildung' },
-        { jahr: '2023', titel: 'Senioren Yoga', info: 'Zertifizierte Ausbildung' },
-        { jahr: '2022', titel: 'Kinderyoga-Lehrerin', info: 'Zertifizierte Ausbildung' },
-        { jahr: '2021', titel: 'Yoga Alliance 200h', info: 'Grundausbildung Hatha & Vinyasa Yoga' },
-        { jahr: '2019', titel: 'Traumapädagogin', info: 'Zertifizierte Ausbildung' },
+        { jahr: '2024–2025', titel: 'Ashtanga Yoga', info: 'Yoga Werkstatt', badge: true },
+        { jahr: '2022', titel: 'Prä- & Postnatal-Yoga', info: '', badge: true },
+        { jahr: '2021', titel: 'Kinderyoga-Lehrerin', info: '', badge: true },
+        { jahr: '2021', titel: 'Traumapädagogin', info: '', badge: true },
+        { jahr: '2005–2010', titel: 'BAKIP Amstetten', info: 'Ausbildung zur Kindergartenpädagogin', badge: false },
       ].map(item => (
         <div class="flex items-start gap-6 p-5 rounded-2xl" style="background-color: var(--color-sissi-cream)">
-          <span class="text-sm font-bold shrink-0 mt-0.5" style="color: var(--color-sissi-green)">{item.jahr}</span>
+          <span class="text-sm font-bold shrink-0 mt-0.5 w-24" style="color: var(--color-sissi-green)">{item.jahr}</span>
           <div>
-            <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{item.titel}</p>
-            <p class="text-sm mt-0.5 opacity-70" style="color: var(--color-sissi-olive)">{item.info}</p>
+            <div class="flex items-center gap-2">
+              <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{item.titel}</p>
+              {item.badge && <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background-color: color-mix(in srgb, var(--color-sissi-green) 15%, transparent); color: var(--color-sissi-green)">Zertifikat</span>}
+            </div>
+            {item.info && <p class="text-sm mt-0.5 opacity-70" style="color: var(--color-sissi-olive)">{item.info}</p>}
           </div>
         </div>
       ))}
