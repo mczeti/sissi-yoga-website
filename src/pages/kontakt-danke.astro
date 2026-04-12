@@ -1,0 +1,28 @@
+---
+import SubpageLayout from '../layouts/SubpageLayout.astro'
+---
+
+<SubpageLayout title="Danke!">
+  <div class="max-w-2xl mx-auto flex flex-col items-center gap-6 py-12 text-center">
+
+    <div class="w-20 h-20 rounded-full flex items-center justify-center" style="background-color: var(--color-sissi-cream)">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--color-sissi-green)">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-light mb-2" style="color: var(--color-sissi-olive)">Nachricht erhalten!</h2>
+      <p class="text-base" style="color: var(--color-sissi-circle)">
+        Danke für deine Anfrage. Sissi meldet sich so bald wie möglich bei dir.
+      </p>
+    </div>
+
+    <a href="/"
+       class="px-8 py-3 rounded-full text-white font-medium transition hover:scale-105"
+       style="background-color: var(--color-sissi-olive)">
+      Zurück zur Startseite
+    </a>
+
+  </div>
+</SubpageLayout>
