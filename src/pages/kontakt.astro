@@ -13,7 +13,7 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
         <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Anfrage stellen</h2>
       </div>
 
-      <form name="kontakt" method="POST" action="/kontakt-danke" data-netlify="true" netlify-honeypot="bot-field" class="flex flex-col gap-4">
+      <form id="kontakt-form" name="kontakt" method="POST" action="/kontakt-danke" data-netlify="true" netlify-honeypot="bot-field" class="flex flex-col gap-4">
         <input type="hidden" name="form-name" value="kontakt" />
         <input type="hidden" name="bot-field" />
 
@@ -152,5 +152,15 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     </div>
 
   </div>
+
+<script>
+  const form = document.getElementById('kontakt-form') as HTMLFormElement
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const data = new FormData(form)
+    await fetch('/', { method: 'POST', body: data })
+    window.location.href = '/kontakt-danke'
+  })
+</script>
 
 </SubpageLayout>
