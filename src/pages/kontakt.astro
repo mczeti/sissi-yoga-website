@@ -6,6 +6,77 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
 
   <div class="max-w-2xl mx-auto flex flex-col gap-10">
 
+    <!-- Kontaktformular -->
+    <div class="rounded-2xl p-8 flex flex-col gap-6" style="background-color: var(--color-sissi-cream)">
+      <div>
+        <p class="text-xs font-bold tracking-widest uppercase mb-1" style="color: var(--color-sissi-green)">Schreib mir</p>
+        <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Anfrage stellen</h2>
+      </div>
+
+      <form name="kontakt" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="flex flex-col gap-4">
+        <input type="hidden" name="form-name" value="kontakt" />
+        <input type="hidden" name="bot-field" />
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <label for="name" class="text-xs font-semibold uppercase tracking-widest" style="color: var(--color-sissi-green)">Name *</label>
+            <input type="text" id="name" name="name" required
+              class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2"
+              style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)"
+              placeholder="Dein Name" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="email" class="text-xs font-semibold uppercase tracking-widest" style="color: var(--color-sissi-green)">E-Mail *</label>
+            <input type="email" id="email" name="email" required
+              class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2"
+              style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)"
+              placeholder="deine@email.at" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <label for="telefon" class="text-xs font-semibold uppercase tracking-widest" style="color: var(--color-sissi-green)">Telefon</label>
+            <input type="tel" id="telefon" name="telefon"
+              class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2"
+              style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)"
+              placeholder="+43 ..." />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="kurs" class="text-xs font-semibold uppercase tracking-widest" style="color: var(--color-sissi-green)">Interesse</label>
+            <select id="kurs" name="kurs"
+              class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2"
+              style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)">
+              <option value="">Bitte wählen …</option>
+              <option>Kinderyoga</option>
+              <option>Prä- & Postnatal Yoga</option>
+              <option>Mama Baby Yoga</option>
+              <option>Senioren Yoga</option>
+              <option>Vinyasa Yoga Flow</option>
+              <option>Yoga im Garten</option>
+              <option>Schulen & Kindergärten</option>
+              <option>Workshop</option>
+              <option>Allgemeine Anfrage</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label for="nachricht" class="text-xs font-semibold uppercase tracking-widest" style="color: var(--color-sissi-green)">Nachricht *</label>
+          <textarea id="nachricht" name="nachricht" required rows="4"
+            class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2 resize-none"
+            style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)"
+            placeholder="Was möchtest du wissen?"></textarea>
+        </div>
+
+        <button type="submit"
+          class="self-start px-8 py-3 rounded-full text-white font-medium transition hover:scale-105"
+          style="background-color: var(--color-sissi-olive)">
+          Absenden
+        </button>
+      </form>
+    </div>
+
     <!-- Kontaktkarte -->
     <div class="rounded-2xl p-8 flex flex-col gap-6" style="background-color: var(--color-sissi-cream)">
 
