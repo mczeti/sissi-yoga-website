@@ -166,7 +166,7 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)
   }
 
-  emailInput?.addEventListener('input', () => {
+  emailInput?.addEventListener('blur', () => {
     const valid = !emailInput.value || validateEmail(emailInput.value)
     emailError?.classList.toggle('hidden', valid)
     emailInput.style.borderColor = valid ? '' : '#e53e3e'
@@ -177,7 +177,7 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     return /^[+\d][\d\s\-\/().]{6,}$/.test(value)
   }
 
-  telefonInput?.addEventListener('input', () => {
+  telefonInput?.addEventListener('blur', () => {
     const valid = validateTelefon(telefonInput.value)
     telefonError?.classList.toggle('hidden', valid)
     telefonInput.style.borderColor = valid ? '' : '#e53e3e'
