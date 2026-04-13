@@ -41,6 +41,7 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
               class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2"
               style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)"
               placeholder="+43 ..." />
+            <p id="telefon-error" class="text-xs hidden" style="color: #e53e3e">Bitte eine gültige Telefonnummer eingeben (z.B. +43 660 1234567)</p>
           </div>
           <div class="flex flex-col gap-1">
             <label for="kurs" class="text-xs font-semibold uppercase tracking-widest" style="color: var(--color-sissi-green)">Interesse</label>
@@ -155,8 +156,26 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
 
 <script>
   const form = document.getElementById('kontakt-form') as HTMLFormElement
+  const telefonInput = document.getElementById('telefon') as HTMLInputElement
+  const telefonError = document.getElementById('telefon-error')
+
+  function validateTelefon(value: string): boolean {
+    if (!value) return true // optional
+    return /^[+\d][\d\s\-\/().]{6,}$/.test(value)
+  }
+
+  telefonInput?.addEventListener('input', () => {
+    const valid = validateTelefon(telefonInput.value)
+    telefonError?.classList.toggle('hidden', valid)
+    telefonInput.style.borderColor = valid ? '' : '#e53e3e'
+  })
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
+    if (!validateTelefon(telefonInput?.value ?? '')) {
+      telefonInput?.focus()
+      return
+    }
     const data = new URLSearchParams(new FormData(form) as any).toString()
     await fetch('/', {
       method: 'POST',
