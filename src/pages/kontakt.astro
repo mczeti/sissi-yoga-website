@@ -157,8 +157,12 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
   const form = document.getElementById('kontakt-form') as HTMLFormElement
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
-    const data = new FormData(form)
-    await fetch('/', { method: 'POST', body: data })
+    const data = new URLSearchParams(new FormData(form) as any).toString()
+    await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: data,
+    })
     window.location.href = '/kontakt-danke'
   })
 </script>
