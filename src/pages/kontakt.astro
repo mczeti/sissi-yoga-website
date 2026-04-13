@@ -157,12 +157,26 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
   const form = document.getElementById('kontakt-form') as HTMLFormElement
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
-    const data = new URLSearchParams(new FormData(form) as any).toString()
-    await fetch('/', {
+    const formData = new FormData(form)
+    const urlEncoded = new URLSearchParams(formData as any).toString()
+
+    // 1. An Netlify Forms senden (Spam-Schutz + Archiv)
+    const netlifyPost = fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: data,
+      body: urlEncoded,
     })
+
+    // 2. Direkt ans CRM senden (automatisch, kein Webhook nötig)
+    const crmData: Record<string, string> = {}
+    formData.forEach((v, k) => { crmData[k] = String(v) })
+    const crmPost = fetch('https://sissiyogacrm.netlify.app/api/webhook/kontakt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: crmData }),
+    })
+
+    await Promise.allSettled([netlifyPost, crmPost])
     window.location.href = '/kontakt-danke'
   })
 </script>
