@@ -31,6 +31,7 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
               class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2"
               style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)"
               placeholder="deine@email.at" />
+            <p id="email-error" class="text-xs hidden" style="color: #e53e3e">Bitte eine gültige E-Mail-Adresse eingeben (z.B. name@example.at)</p>
           </div>
         </div>
 
@@ -46,8 +47,8 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
           <div class="flex flex-col gap-1">
             <label for="kurs" class="text-xs font-semibold uppercase tracking-widest" style="color: var(--color-sissi-green)">Interesse</label>
             <select id="kurs" name="kurs"
-              class="rounded-xl px-4 py-3 text-sm border border-black/10 bg-white outline-none focus:ring-2"
-              style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green)">
+              class="rounded-xl px-4 text-sm border border-black/10 bg-white outline-none focus:ring-2"
+              style="color: var(--color-sissi-olive); --tw-ring-color: var(--color-sissi-green); height: 46px; -webkit-appearance: auto;">
               <option value="">Bitte wählen …</option>
               <option>Kinderyoga</option>
               <option>Prä- & Postnatal Yoga</option>
@@ -156,8 +157,20 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
 
 <script>
   const form = document.getElementById('kontakt-form') as HTMLFormElement
+  const emailInput   = document.getElementById('email') as HTMLInputElement
+  const emailError   = document.getElementById('email-error')
   const telefonInput = document.getElementById('telefon') as HTMLInputElement
   const telefonError = document.getElementById('telefon-error')
+
+  function validateEmail(value: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)
+  }
+
+  emailInput?.addEventListener('input', () => {
+    const valid = !emailInput.value || validateEmail(emailInput.value)
+    emailError?.classList.toggle('hidden', valid)
+    emailInput.style.borderColor = valid ? '' : '#e53e3e'
+  })
 
   function validateTelefon(value: string): boolean {
     if (!value) return true // optional
@@ -172,6 +185,11 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
+    if (!validateEmail(emailInput?.value ?? '')) {
+      emailInput?.focus()
+      emailError?.classList.remove('hidden')
+      return
+    }
     if (!validateTelefon(telefonInput?.value ?? '')) {
       telefonInput?.focus()
       return
