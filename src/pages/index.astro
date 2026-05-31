@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro'
 import { useStoryblokApi } from '@storyblok/astro'
 import Stundenplan from '../components/Stundenplan.astro'
+import KommendeTermine from '../components/KommendeTermine.astro'
 
 // Flyer aus Storyblok laden
 let flyer: any[] = []
@@ -17,9 +18,6 @@ try {
 } catch (e) {
   // Storyblok noch nicht konfiguriert – leere Liste
 }
-
-const flyerKinder = flyer.filter(f => f.zielgruppe === 'kinder')
-const flyerErwachsene = flyer.filter(f => f.zielgruppe !== 'kinder')
 
 const standorte = [
   {
@@ -179,87 +177,7 @@ const standorte = [
   </section>
 
   <!-- TERMINE / FLYER -->
-  <section id="aktuelles" class="py-20 px-8 md:px-16" style="background-color: var(--color-sissi-cream)">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-12">
-        <p class="text-xs font-bold tracking-widest uppercase mb-2" style="color: var(--color-sissi-green)">Aktuelles</p>
-        <h2 class="text-4xl font-light" style="color: var(--color-sissi-olive)">Kommende Termine</h2>
-      </div>
-
-      {flyer.length === 0 ? (
-        <p class="text-center opacity-40" style="color: var(--color-sissi-olive)">
-          Termine folgen in Kürze …
-        </p>
-      ) : (
-        <div class="space-y-14">
-          {flyerErwachsene.length > 0 && (
-            <div>
-              <h3 class="text-xl font-light mb-6" style="color: var(--color-sissi-olive)">Erwachsene</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {flyerErwachsene.map((f) => (
-                  <div class="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-white">
-                    {f.bild?.filename && (() => {
-                      const isPdf = f.bild.filename.endsWith('.pdf')
-                      return isPdf ? (
-                        <a href={f.bild.filename} target="_blank" rel="noopener"
-                           class="flex flex-col items-center justify-center gap-3 p-10"
-                           style="background-color: var(--color-sissi-cream)">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-40" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                          </svg>
-                          <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
-                        </a>
-                      ) : (
-                        <a href={f.bild.filename} target="_blank" rel="noopener">
-                          <img src={f.bild.filename} alt={f.titel ?? 'Flyer'} class="w-full object-cover" />
-                        </a>
-                      )
-                    })()}
-                    <div class="p-4">
-                      {f.titel && <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{f.titel}</p>}
-                      {f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {new Date(f.gueltig_ab).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {flyerKinder.length > 0 && (
-            <div>
-              <h3 class="text-xl font-light mb-6" style="color: var(--color-sissi-olive)">Kinderyoga</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {flyerKinder.map((f) => (
-                  <div class="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-white">
-                    {f.bild?.filename && (() => {
-                      const isPdf = f.bild.filename.endsWith('.pdf')
-                      return isPdf ? (
-                        <a href={f.bild.filename} target="_blank" rel="noopener"
-                           class="flex flex-col items-center justify-center gap-3 p-10"
-                           style="background-color: var(--color-sissi-cream)">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-40" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                          </svg>
-                          <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
-                        </a>
-                      ) : (
-                        <a href={f.bild.filename} target="_blank" rel="noopener">
-                          <img src={f.bild.filename} alt={f.titel ?? 'Flyer'} class="w-full object-cover" />
-                        </a>
-                      )
-                    })()}
-                    <div class="p-4">
-                      {f.titel && <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{f.titel}</p>}
-                      {f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {new Date(f.gueltig_ab).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  </section>
+  <KommendeTermine flyer={flyer} />
 
   <!-- STUNDENPLAN -->
   <section id="stundenplan" class="py-20 px-8 md:px-16 bg-white">
