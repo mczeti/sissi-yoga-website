@@ -1,15 +1,21 @@
 ---
 // KommendeTermine.astro — Flyer-Sektion mit Spotlight (featured),
-// Filter (Kinder/Erwachsene) und Ausgebucht-Status.
+// Filter (Kinder/Erwachsene), Ausgebucht-Status und Workshop/Kurs-Typ.
 // Erwartet `flyer` = Array von Storyblok-Flyer-Contents
-// (Felder: titel, gueltig_ab, bild, zielgruppe, ausgebucht, featured).
+// (Felder: titel, gueltig_ab, bild, zielgruppe, ausgebucht, featured, typ).
 
 const { flyer = [] } = Astro.props as { flyer: any[] }
+
+const today = new Date()
+today.setHours(0, 0, 0, 0)
 
 const fmtDate = (d: string) =>
   d ? new Date(d).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' }) : null
 const isPdf = (f: any) => !!f?.bild?.filename?.toLowerCase().endsWith('.pdf')
 const grpOf = (f: any) => (f.zielgruppe === 'kinder' ? 'kinder' : 'erwachsene')
+const isWorkshop = (f: any) => f.typ === 'workshop'
+const isPast = (f: any) => isWorkshop(f) && f.gueltig_ab && new Date(f.gueltig_ab) < today
+const datePrefix = (f: any) => isWorkshop(f) ? 'am' : 'ab'
 
 const GROUPS: Record<string, { label: string; color: string }> = {
   kinder:     { label: 'Kinderyoga',      color: 'var(--color-sissi-green)' },
@@ -18,6 +24,12 @@ const GROUPS: Record<string, { label: string; color: string }> = {
 
 const featured = flyer.filter((f) => f.featured)
 const rest = flyer.filter((f) => !f.featured)
+
+// Vergangene Workshops ans Ende sortieren
+const restSorted = [
+  ...rest.filter((f) => !isPast(f)),
+  ...rest.filter((f) => isPast(f)),
+]
 
 const counts = {
   all: rest.length,
@@ -65,7 +77,7 @@ const counts = {
                   Empfehlung · {GROUPS[grpOf(f)].label}
                 </p>
                 <h3 class="text-3xl font-light mb-2" style="color: var(--color-sissi-olive)">{f.titel}</h3>
-                {f.gueltig_ab && <p class="text-sm mb-6" style="color: var(--color-sissi-circle)">Ab {fmtDate(f.gueltig_ab)}</p>}
+                {f.gueltig_ab && <p class="text-sm mb-6" style="color: var(--color-sissi-circle)">{datePrefix(f).charAt(0).toUpperCase() + datePrefix(f).slice(1)} {fmtDate(f.gueltig_ab)}</p>}
                 {f.ausgebucht ? (
                   <span class="inline-flex w-fit items-center px-5 py-3 rounded-full font-medium text-sm" style="background: color-mix(in srgb, var(--color-sissi-olive) 8%, white); color: var(--color-sissi-circle)">Aktuell ausgebucht</span>
                 ) : (
@@ -88,12 +100,13 @@ const counts = {
 
         {/* ---------- Grid ---------- */}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-grid>
-          {rest.map((f) => {
+          {restSorted.map((f) => {
             const g = GROUPS[grpOf(f)]
+            const past = isPast(f)
             const clickable = !f.ausgebucht && f.bild?.filename
             const Tag = clickable ? 'a' : 'div'
             return (
-              <article class:list={['flyer-card rounded-2xl overflow-hidden bg-white shadow-md transition-shadow', { 'is-sold': f.ausgebucht, 'hover:shadow-xl': clickable }]} data-group={grpOf(f)}>
+              <article class:list={['flyer-card rounded-2xl overflow-hidden bg-white shadow-md transition-shadow', { 'is-sold': f.ausgebucht, 'is-past': past, 'hover:shadow-xl': clickable && !past }]} data-group={grpOf(f)}>
                 <Tag href={clickable ? f.bild.filename : undefined} target={clickable ? '_blank' : undefined} rel="noopener" class="group block relative overflow-hidden">
                   <span class="accent" style={`background:${g.color}`}></span>
                   {isPdf(f) ? (
@@ -105,6 +118,7 @@ const counts = {
                     <img src={f.bild?.filename} alt={f.titel ?? 'Flyer'} class="w-full block transition-transform duration-500 group-hover:scale-105" />
                   )}
                   {f.ausgebucht && <div class="sold-band">Ausgebucht</div>}
+                  {past && <div class="past-band">Vergangen</div>}
                 </Tag>
                 <div class="p-4">
                   <span class="inline-block text-[11px] font-semibold tracking-wide px-2.5 py-1 rounded-full mb-2" style={`color:${g.color}; background: color-mix(in srgb, ${g.color} 14%, white)`}>{g.label}</span>
@@ -112,7 +126,7 @@ const counts = {
                   {f.ausgebucht ? (
                     <a href="/kontakt" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
                   ) : (
-                    f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {fmtDate(f.gueltig_ab)}</p>
+                    f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">{datePrefix(f)} {fmtDate(f.gueltig_ab)}</p>
                   )}
                 </div>
               </article>
@@ -157,6 +171,15 @@ const counts = {
   .is-sold img { filter: grayscale(.85) brightness(.95); opacity: .6; }
   .is-sold { cursor: default; }
   .is-sold img { transform: none !important; }
+
+  /* Vergangene Workshops */
+  .past-band {
+    position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%);
+    z-index: 3; text-align: center; padding: .55rem 0;
+    font-weight: 700; letter-spacing: .16em; text-transform: uppercase; font-size: .8rem;
+    color: #fff; background: rgba(74,82,64,0.75);
+  }
+  .is-past img { filter: grayscale(1) brightness(.9); opacity: .5; transform: none !important; }
 </style>
 
 <script>

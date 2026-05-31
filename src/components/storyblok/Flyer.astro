@@ -11,11 +11,15 @@ const grp = blok.zielgruppe === 'kinder' ? 'kinder' : 'erwachsene'
 const cat = grp === 'kinder'
   ? { label: 'Kinderyoga', color: 'var(--color-sissi-green)' }
   : { label: 'Erwachsenenyoga', color: 'var(--color-sissi-olive)' }
+const isWorkshop = blok.typ === 'workshop'
+const today = new Date(); today.setHours(0,0,0,0)
+const isPast = isWorkshop && blok.gueltig_ab && new Date(blok.gueltig_ab) < today
+const datePrefix = isWorkshop ? 'am' : 'ab'
 const clickable = !blok.ausgebucht && blok.bild?.filename
 const Tag = clickable ? 'a' : 'div'
 ---
 
-<article class:list={['flyer-card rounded-2xl overflow-hidden bg-white shadow-md transition-shadow', { 'is-sold': blok.ausgebucht, 'hover:shadow-xl': clickable }]} data-group={grp}>
+<article class:list={['flyer-card rounded-2xl overflow-hidden bg-white shadow-md transition-shadow', { 'is-sold': blok.ausgebucht, 'is-past': isPast, 'hover:shadow-xl': clickable && !isPast }]} data-group={grp}>
   <Tag href={clickable ? blok.bild.filename : undefined} target={clickable ? '_blank' : undefined} rel="noopener" class="group block relative overflow-hidden">
     <span class="accent" style={`background:${cat.color}`}></span>
     {isPdf ? (
@@ -33,6 +37,7 @@ const Tag = clickable ? 'a' : 'div'
       </span>
     )}
     {blok.ausgebucht && <div class="sold-band">Ausgebucht</div>}
+    {isPast && <div class="past-band">Vergangen</div>}
   </Tag>
   <div class="p-4">
     <span class="inline-block text-[11px] font-semibold tracking-wide px-2.5 py-1 rounded-full mb-2" style={`color:${cat.color}; background: color-mix(in srgb, ${cat.color} 14%, white)`}>{cat.label}</span>
@@ -40,7 +45,7 @@ const Tag = clickable ? 'a' : 'div'
     {blok.ausgebucht ? (
       <a href="/kontakt" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
     ) : (
-      datum && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {datum}</p>
+      datum && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">{datePrefix.charAt(0).toUpperCase() + datePrefix.slice(1)} {datum}</p>
     )}
   </div>
 </article>
@@ -62,4 +67,11 @@ const Tag = clickable ? 'a' : 'div'
   }
   .is-sold img { filter: grayscale(.85) brightness(.95); opacity: .6; transform: none !important; }
   .is-sold { cursor: default; }
+  .past-band {
+    position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%);
+    z-index: 3; text-align: center; padding: .55rem 0;
+    font-weight: 700; letter-spacing: .16em; text-transform: uppercase; font-size: .8rem;
+    color: #fff; background: rgba(74,82,64,0.75);
+  }
+  .is-past img { filter: grayscale(1) brightness(.9); opacity: .5; transform: none !important; }
 </style>
