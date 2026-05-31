@@ -10,7 +10,17 @@
       "Bash(npm install:*)",
       "Bash(npm run:*)",
       "Bash(node:*)",
-      "Bash(git tag:*)"
+      "Bash(git tag:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(curl:*)",
+      "Bash(git push:*)",
+      "Read(//Users/martinz/sissi-yoga-automation/**)",
+      "Bash(git *)",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(python3 -c ' *)",
+      "Bash(mkdir -p /Users/martinz/sissi-yoga-website/.claude)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }
