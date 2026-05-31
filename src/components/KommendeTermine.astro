@@ -1,0 +1,179 @@
+---
+// KommendeTermine.astro — Flyer-Sektion mit Spotlight (featured),
+// Filter (Kinder/Erwachsene) und Ausgebucht-Status.
+// Erwartet `flyer` = Array von Storyblok-Flyer-Contents
+// (Felder: titel, gueltig_ab, bild, zielgruppe, ausgebucht, featured).
+
+const { flyer = [] } = Astro.props as { flyer: any[] }
+
+const fmtDate = (d: string) =>
+  d ? new Date(d).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' }) : null
+const isPdf = (f: any) => !!f?.bild?.filename?.toLowerCase().endsWith('.pdf')
+const grpOf = (f: any) => (f.zielgruppe === 'kinder' ? 'kinder' : 'erwachsene')
+
+const GROUPS: Record<string, { label: string; color: string }> = {
+  kinder:     { label: 'Kinderyoga',      color: 'var(--color-sissi-green)' },
+  erwachsene: { label: 'Erwachsenenyoga', color: 'var(--color-sissi-olive)' },
+}
+
+const featured = flyer.filter((f) => f.featured)
+const rest = flyer.filter((f) => !f.featured)
+
+const counts = {
+  all: rest.length,
+  kinder: rest.filter((f) => grpOf(f) === 'kinder').length,
+  erwachsene: rest.filter((f) => grpOf(f) === 'erwachsene').length,
+}
+---
+
+<section id="aktuelles" class="py-20 px-8 md:px-16" style="background-color: var(--color-sissi-cream)">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-12">
+      <p class="text-xs font-bold tracking-widest uppercase mb-2" style="color: var(--color-sissi-green)">Aktuelles</p>
+      <h2 class="text-4xl font-light" style="color: var(--color-sissi-olive)">Kommende Termine</h2>
+    </div>
+
+    {flyer.length === 0 ? (
+      <p class="text-center opacity-40" style="color: var(--color-sissi-olive)">Termine folgen in Kürze …</p>
+    ) : (
+      <>
+        {/* ---------- Spotlight: beworbene Flyer ---------- */}
+        {featured.map((f) => (
+          <a
+            href={!f.ausgebucht ? f.bild?.filename : undefined}
+            target={!f.ausgebucht ? '_blank' : undefined}
+            rel="noopener"
+            class:list={['spotlight group block rounded-2xl overflow-hidden bg-white shadow-md transition-shadow mb-10', { 'is-sold': f.ausgebucht, 'hover:shadow-xl': !f.ausgebucht }]}
+          >
+            <div class="grid md:grid-cols-[minmax(0,360px)_1fr] items-stretch">
+              <div class="relative flyer-img">
+                {isPdf(f) ? (
+                  <div class="flex flex-col items-center justify-center gap-3 p-12 h-full min-h-[320px]" style="background-color: var(--color-sissi-cream)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-40" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
+                  </div>
+                ) : (
+                  <img src={f.bild?.filename} alt={f.titel ?? 'Flyer'} class="w-full h-full object-cover" />
+                )}
+                {f.ausgebucht && <div class="sold-band">Ausgebucht</div>}
+              </div>
+
+              <div class="p-8 md:p-10 flex flex-col justify-center">
+                <p class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase mb-3" style="color: var(--color-sissi-green)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.4 6.8L12 17.8 5.9 21.3l1.4-6.8L2.2 9.7l6.9-.7L12 2z"/></svg>
+                  Empfehlung · {GROUPS[grpOf(f)].label}
+                </p>
+                <h3 class="text-3xl font-light mb-2" style="color: var(--color-sissi-olive)">{f.titel}</h3>
+                {f.gueltig_ab && <p class="text-sm mb-6" style="color: var(--color-sissi-circle)">Ab {fmtDate(f.gueltig_ab)}</p>}
+                {f.ausgebucht ? (
+                  <span class="inline-flex w-fit items-center px-5 py-3 rounded-full font-medium text-sm" style="background: color-mix(in srgb, var(--color-sissi-olive) 8%, white); color: var(--color-sissi-circle)">Aktuell ausgebucht</span>
+                ) : (
+                  <span class="inline-flex w-fit items-center gap-2 px-6 py-3 rounded-full font-medium text-sm transition group-hover:scale-105" style="background: var(--color-sissi-olive); color: white">
+                    Flyer ansehen
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                )}
+              </div>
+            </div>
+          </a>
+        ))}
+
+        {/* ---------- Filter ---------- */}
+        <div class="flex flex-wrap justify-center gap-2 mb-10" data-filter>
+          <button type="button" data-f="all" data-active>Alle <span class="opacity-50">{counts.all}</span></button>
+          <button type="button" data-f="kinder">Kinderyoga <span class="opacity-50">{counts.kinder}</span></button>
+          <button type="button" data-f="erwachsene">Erwachsenenyoga <span class="opacity-50">{counts.erwachsene}</span></button>
+        </div>
+
+        {/* ---------- Grid ---------- */}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-grid>
+          {rest.map((f) => {
+            const g = GROUPS[grpOf(f)]
+            const clickable = !f.ausgebucht && f.bild?.filename
+            const Tag = clickable ? 'a' : 'div'
+            return (
+              <article class:list={['flyer-card rounded-2xl overflow-hidden bg-white shadow-md transition-shadow', { 'is-sold': f.ausgebucht, 'hover:shadow-xl': clickable }]} data-group={grpOf(f)}>
+                <Tag href={clickable ? f.bild.filename : undefined} target={clickable ? '_blank' : undefined} rel="noopener" class="group block relative overflow-hidden">
+                  <span class="accent" style={`background:${g.color}`}></span>
+                  {isPdf(f) ? (
+                    <div class="flex flex-col items-center justify-center gap-3 p-10" style="background-color: var(--color-sissi-cream)">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-40" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                      <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
+                    </div>
+                  ) : (
+                    <img src={f.bild?.filename} alt={f.titel ?? 'Flyer'} class="w-full block transition-transform duration-500 group-hover:scale-105" />
+                  )}
+                  {f.ausgebucht && <div class="sold-band">Ausgebucht</div>}
+                </Tag>
+                <div class="p-4">
+                  <span class="inline-block text-[11px] font-semibold tracking-wide px-2.5 py-1 rounded-full mb-2" style={`color:${g.color}; background: color-mix(in srgb, ${g.color} 14%, white)`}>{g.label}</span>
+                  {f.titel && <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{f.titel}</p>}
+                  {f.ausgebucht ? (
+                    <a href="/kontakt" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
+                  ) : (
+                    f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">Ab {fmtDate(f.gueltig_ab)}</p>
+                  )}
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      </>
+    )}
+  </div>
+</section>
+
+<style>
+  /* Filter-Pills */
+  [data-filter] button {
+    font-size: .875rem;
+    font-weight: 500;
+    padding: .55rem 1.25rem;
+    border-radius: 9999px;
+    border: 1.5px solid color-mix(in srgb, var(--color-sissi-olive) 18%, white);
+    background: white;
+    color: var(--color-sissi-circle);
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  [data-filter] button:hover { border-color: var(--color-sissi-green); }
+  [data-filter] button[data-active] {
+    background: var(--color-sissi-olive);
+    border-color: var(--color-sissi-olive);
+    color: white;
+  }
+
+  /* Kategorie-Akzentleiste oben auf der Karte */
+  .accent { position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 2; }
+
+  /* Ausgebucht */
+  .sold-band {
+    position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%);
+    z-index: 3; text-align: center; padding: .55rem 0;
+    font-weight: 700; letter-spacing: .16em; text-transform: uppercase; font-size: .8rem;
+    color: #fff; background: #a5462f;
+  }
+  .is-sold img { filter: grayscale(.85) brightness(.95); opacity: .6; }
+  .is-sold { cursor: default; }
+  .is-sold img { transform: none !important; }
+</style>
+
+<script>
+  const sec = document.getElementById('aktuelles')
+  if (sec) {
+    const pills = Array.from(sec.querySelectorAll('[data-filter] button')) as HTMLElement[]
+    const cards = Array.from(sec.querySelectorAll('[data-grid] [data-group]')) as HTMLElement[]
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        pills.forEach((p) => p.removeAttribute('data-active'))
+        pill.setAttribute('data-active', '')
+        const f = (pill as HTMLElement).dataset.f
+        cards.forEach((c) => {
+          const show = f === 'all' || c.dataset.group === f
+          c.style.display = show ? '' : 'none'
+        })
+      })
+    })
+  }
+</script>
