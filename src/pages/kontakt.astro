@@ -71,11 +71,16 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
             placeholder="Was möchtest du wissen?"></textarea>
         </div>
 
-        <button type="submit"
-          class="self-start px-8 py-3 rounded-full text-white font-medium transition hover:scale-105"
-          style="background-color: var(--color-sissi-olive)">
-          Absenden
-        </button>
+        <div class="flex flex-col gap-2">
+          <button type="submit"
+            class="self-start px-8 py-3 rounded-full text-white font-medium transition hover:scale-105"
+            style="background-color: var(--color-sissi-olive)">
+            Absenden
+          </button>
+          <p id="form-error" class="text-sm hidden" style="color: #e53e3e">
+            Etwas ist schiefgelaufen – bitte versuche es erneut oder schreib direkt an <a href="mailto:sissi.zehetner@gmail.com" class="underline">sissi.zehetner@gmail.com</a>
+          </p>
+        </div>
       </form>
     </div>
 
@@ -183,6 +188,8 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     telefonInput.style.borderColor = valid ? '' : '#e53e3e'
   })
 
+  const formError = document.getElementById('form-error')
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
     if (!validateEmail(emailInput?.value ?? '')) {
@@ -194,13 +201,22 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
       telefonInput?.focus()
       return
     }
-    const data = new URLSearchParams(new FormData(form) as any).toString()
-    await fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: data,
-    })
-    window.location.href = '/kontakt-danke'
+    formError?.classList.add('hidden')
+    try {
+      const data = new URLSearchParams(new FormData(form) as any).toString()
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data,
+      })
+      if (res.ok) {
+        window.location.href = '/kontakt-danke'
+      } else {
+        formError?.classList.remove('hidden')
+      }
+    } catch {
+      formError?.classList.remove('hidden')
+    }
   })
 </script>
 
