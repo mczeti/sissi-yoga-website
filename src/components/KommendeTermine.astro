@@ -51,14 +51,16 @@ const counts = {
     ) : (
       <>
         {/* ---------- Spotlight: beworbene Flyer ---------- */}
-        {featured.map((f) => (
+        {featured.map((f) => {
+          const hasBild2 = !!f.bild2?.filename
+          return (
           <a
             href={!f.ausgebucht ? f.bild?.filename : undefined}
             target={!f.ausgebucht ? '_blank' : undefined}
             rel="noopener"
             class:list={['spotlight group block rounded-2xl overflow-hidden bg-white shadow-md transition-shadow mb-10', { 'is-sold': f.ausgebucht, 'hover:shadow-xl': !f.ausgebucht }]}
           >
-            <div class="grid md:grid-cols-[minmax(0,360px)_1fr] items-stretch">
+            <div class:list={['grid items-stretch', hasBild2 ? 'md:grid-cols-[minmax(0,360px)_1fr_minmax(0,300px)]' : 'md:grid-cols-[minmax(0,360px)_1fr]']}>
               <div class="relative flyer-img">
                 {isPdf(f) ? (
                   <div class="flex flex-col items-center justify-center gap-3 p-12 h-full min-h-[320px]" style="background-color: var(--color-sissi-cream)">
@@ -87,9 +89,16 @@ const counts = {
                   </span>
                 )}
               </div>
+
+              {hasBild2 && (
+                <div class="hidden md:block relative overflow-hidden">
+                  <img src={f.bild2.filename} alt={f.titel ?? 'Zusatzbild'} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                </div>
+              )}
             </div>
           </a>
-        ))}
+          )
+        })}
 
         {/* ---------- Filter ---------- */}
         <div class="flex flex-wrap justify-center gap-2 mb-10" data-filter>
