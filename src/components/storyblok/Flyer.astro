@@ -28,7 +28,7 @@ const Tag = clickable ? 'a' : 'div'
         <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
       </div>
     ) : blok.bild?.filename && (
-      <img src={blok.bild.filename} alt={blok.titel ?? 'Flyer'} class="w-full block transition-transform duration-500 group-hover:scale-105" />
+      <img src={blok.bild.filename} alt={blok.titel ?? `${cat.label}-Flyer`} class="w-full block transition-transform duration-500 group-hover:scale-105" />
     )}
     {blok.featured && !blok.ausgebucht && (
       <span class="badge">

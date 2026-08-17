@@ -68,7 +68,7 @@ const counts = {
                     <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
                   </div>
                 ) : (
-                  <img src={f.bild?.filename} alt={f.titel ?? 'Flyer'} class="w-full h-full object-cover" />
+                  <img src={f.bild?.filename} alt={f.titel ?? `${GROUPS[grpOf(f)].label}-Flyer`} class="w-full h-full object-cover" />
                 )}
                 {f.ausgebucht && <div class="sold-band">Ausgebucht</div>}
               </div>
@@ -124,7 +124,7 @@ const counts = {
                       <span class="text-xs font-medium" style="color: var(--color-sissi-green)">PDF öffnen</span>
                     </div>
                   ) : (
-                    <img src={f.bild?.filename} alt={f.titel ?? 'Flyer'} class="w-full block transition-transform duration-500 group-hover:scale-105" />
+                    <img src={f.bild?.filename} alt={f.titel ?? `${g.label}-Flyer`} class="w-full block transition-transform duration-500 group-hover:scale-105" />
                   )}
                   {f.ausgebucht && <div class="sold-band">Ausgebucht</div>}
                   {past && <div class="past-band">Vergangen</div>}
