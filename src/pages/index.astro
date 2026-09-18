@@ -19,6 +19,9 @@ try {
   // Storyblok noch nicht konfiguriert – leere Liste
 }
 
+// Temporärer Hinweis: Kurspause wegen Retreat (blendet sich nach dem 28.9. beim nächsten Deploy automatisch aus)
+const zeigeKurspauseHinweis = new Date() < new Date('2026-09-29T00:00:00+02:00')
+
 const heroBilder = [
   { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', position: 'center center' },
   { src: '/images/Kinderyoga-10.JPG', alt: 'Kinderyoga-Kreis mit Klangschale', position: 'center 30%' },
@@ -116,6 +119,28 @@ const standorte = [
     </div>
 
   </section>
+
+  <!-- HINWEIS: KURSPAUSE -->
+  {zeigeKurspauseHinweis && (
+    <section class="py-14 px-8 md:px-16" style="background-color: var(--color-sissi-cream)">
+      <div class="max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-md bg-white grid md:grid-cols-[260px_1fr]">
+        <div class="flex items-center justify-center p-3" style="background-color: #d8d5cd">
+          <img
+            src="/images/hinweis-kurspause-sept.jpg"
+            alt="Hinweis: Kurspause 22.–28. September, Sissi ist auf Yoga-Retreat in Portugal"
+            class="w-full h-auto max-h-96 md:max-h-full object-contain rounded-lg"
+          />
+        </div>
+        <div class="p-8 flex flex-col justify-center gap-2">
+          <p class="text-xs font-bold tracking-widest uppercase" style="color: var(--color-sissi-green)">Kurzer Hinweis</p>
+          <h3 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Kurspause 22.–28. September</h3>
+          <p class="text-sm leading-relaxed" style="color: var(--color-sissi-circle)">
+            Ich sammle in Portugal neue Yoga-Ideen und freue mich auf eine Woche Retreat. Ab Dienstag, 29. September bin ich wieder wie gewohnt mit meinem Kursangebot für euch da. Habt es schön!
+          </p>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- STANDORTE -->
   <section id="termine" class="py-20 px-8 md:px-16 bg-white">
