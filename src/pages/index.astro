@@ -19,6 +19,11 @@ try {
   // Storyblok noch nicht konfiguriert – leere Liste
 }
 
+const heroBilder = [
+  { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', position: 'center center' },
+  { src: '/images/Kinderyoga-10.JPG', alt: 'Kinderyoga-Kreis mit Klangschale', position: 'center 30%' },
+]
+
 const standorte = [
   {
     name: 'Purkersdorf',
@@ -29,7 +34,7 @@ const standorte = [
   {
     name: 'Tullnerbach',
     kurse: ['Yoga im Garten'],
-    foto: '/images/standort-tullnerbach.jpg',
+    foto: '/images/yoga-im-garten.jpg',
     fotoPosition: 'center center',
   },
   {
@@ -53,15 +58,31 @@ const standorte = [
   <!-- HERO -->
   <section data-hero class="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden">
 
-    <!-- Background image -->
-    <div class="absolute inset-0">
-      <img
-        src="/images/allgemein.JPG"
-        alt="Sissi Familien Yogazeit"
-        class="w-full h-full object-cover object-center"
-      />
+    <!-- Background slideshow -->
+    <div class="absolute inset-0" data-hero-slideshow>
+      {heroBilder.map((bild, i) => (
+        <img
+          src={bild.src}
+          alt={bild.alt}
+          class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out"
+          style={`object-position: ${bild.position}; opacity: ${i === 0 ? 1 : 0}`}
+          data-hero-slide
+        />
+      ))}
       <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.5) 100%)"></div>
     </div>
+
+    <script>
+      const slides = document.querySelectorAll('[data-hero-slide]')
+      if (slides.length > 1) {
+        let current = 0
+        setInterval(() => {
+          slides[current].style.opacity = '0'
+          current = (current + 1) % slides.length
+          slides[current].style.opacity = '1'
+        }, 6000)
+      }
+    </script>
 
     <!-- Content -->
     <div class="relative z-10 text-center px-6 flex flex-col items-center gap-5 translate-y-16 md:translate-y-24">
