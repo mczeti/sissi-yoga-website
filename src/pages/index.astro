@@ -22,9 +22,14 @@ try {
 // Temporärer Hinweis: Kurspause wegen Retreat (blendet sich nach dem 28.9. beim nächsten Deploy automatisch aus)
 const zeigeKurspauseHinweis = new Date() < new Date('2026-09-29T00:00:00+02:00')
 
+// Hochformat-Fotos (vom Insta-Shooting) zeigen auf breiten Desktop-Screens einen ganz
+// anderen Bildausschnitt als auf Mobile (viel schmalerer sichtbarer Streifen) – daher
+// pro Foto ein eigener Fokuspunkt für Mobile und einen für Desktop (md:).
 const heroBilder = [
-  { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', position: 'center center' },
-  { src: '/images/Kinderyoga-10.JPG', alt: 'Kinderyoga-Kreis mit Klangschale', position: 'center 30%' },
+  { src: '/images/achtsamkeit-ritual.jpg', alt: 'Achtsamkeits-Ritual im Garten', positionClass: 'object-[center_50%] md:object-[center_60%]' },
+  { src: '/images/Kinderyoga-10.JPG', alt: 'Kinderyoga-Kreis mit Klangschale', positionClass: 'object-[center_30%]' },
+  { src: '/images/seniorenyoga-hero.jpg', alt: 'Seniorenyoga mit Sissi', positionClass: 'object-center' },
+  { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', positionClass: 'object-center' },
 ]
 
 const standorte = [
@@ -64,26 +69,57 @@ const standorte = [
     <!-- Background slideshow -->
     <div class="absolute inset-0" data-hero-slideshow>
       {heroBilder.map((bild, i) => (
-        <img
-          src={bild.src}
-          alt={bild.alt}
-          class="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out"
-          style={`object-position: ${bild.position}; opacity: ${i === 0 ? 1 : 0}`}
-          data-hero-slide
-        />
+        <div class="absolute inset-0 overflow-hidden" style={`opacity: ${i === 0 ? 1 : 0}`} data-hero-slide>
+          <img
+            src={bild.src}
+            alt={bild.alt}
+            class:list={['w-full h-full object-cover', bild.positionClass]}
+            data-hero-slide-img
+          />
+        </div>
       ))}
       <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.5) 100%)"></div>
     </div>
 
     <script>
-      const slides = document.querySelectorAll('[data-hero-slide]')
+      const slides = document.querySelectorAll<HTMLElement>('[data-hero-slide]')
+      const images = document.querySelectorAll<HTMLElement>('[data-hero-slide-img]')
+      const dots = document.querySelectorAll<HTMLElement>('[data-hero-dot]')
+      const INTERVAL = 6500
+      const FADE = 1500
+      const ZOOM = INTERVAL + FADE
+
+      const setDot = (i: number, active: boolean) => {
+        const dot = dots[i]
+        if (!dot) return
+        dot.style.width = active ? '24px' : '8px'
+        dot.style.background = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'
+      }
+
+      const activate = (i: number) => {
+        const img = images[i]
+        img.style.transition = 'none'
+        img.style.transform = 'scale(1)'
+        void img.offsetWidth // reflow erzwingen, damit der Zoom neu startet
+        img.style.transition = `transform ${ZOOM}ms ease-out`
+        img.style.transform = 'scale(1.12)'
+        slides[i].style.transition = `opacity ${FADE}ms ease-in-out`
+        slides[i].style.opacity = '1'
+        setDot(i, true)
+      }
+
       if (slides.length > 1) {
         let current = 0
+        activate(current)
         setInterval(() => {
           slides[current].style.opacity = '0'
+          setDot(current, false)
           current = (current + 1) % slides.length
-          slides[current].style.opacity = '1'
-        }, 6000)
+          activate(current)
+        }, INTERVAL)
+      } else if (images[0]) {
+        images[0].style.transition = `transform ${ZOOM * 3}ms ease-out`
+        images[0].style.transform = 'scale(1.12)'
       }
     </script>
 
@@ -109,6 +145,19 @@ const standorte = [
         </svg>
         Workshops & Kurse
       </a>
+
+      <!-- Slide-Indikatoren -->
+      {heroBilder.length > 1 && (
+        <div class="flex items-center gap-2 mt-1">
+          {heroBilder.map((_, i) => (
+            <span
+              class="h-1.5 rounded-full transition-all duration-500"
+              style={`width: ${i === 0 ? '24px' : '8px'}; background: rgba(255,255,255,${i === 0 ? '0.9' : '0.4'})`}
+              data-hero-dot
+            ></span>
+          ))}
+        </div>
+      )}
     </div>
 
     <!-- Scroll indicator -->
