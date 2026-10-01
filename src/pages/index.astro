@@ -26,10 +26,10 @@ const zeigeKurspauseHinweis = new Date() < new Date('2026-09-29T00:00:00+02:00')
 // anderen Bildausschnitt als auf Mobile (viel schmalerer sichtbarer Streifen) – daher
 // pro Foto ein eigener Fokuspunkt für Mobile und einen für Desktop (md:).
 const heroBilder = [
+  { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', positionClass: 'object-center' },
   { src: '/images/achtsamkeit-ritual.jpg', alt: 'Achtsamkeits-Ritual im Garten', positionClass: 'object-[center_50%] md:object-[center_60%]' },
   { src: '/images/Kinderyoga-10.JPG', alt: 'Kinderyoga-Kreis mit Klangschale', positionClass: 'object-[center_30%]' },
   { src: '/images/seniorenyoga-hero.jpg', alt: 'Seniorenyoga mit Sissi', positionClass: 'object-center' },
-  { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', positionClass: 'object-center' },
 ]
 
 const standorte = [
@@ -67,14 +67,13 @@ const standorte = [
   <section data-hero class="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden">
 
     <!-- Background slideshow -->
-    <div class="absolute inset-0" data-hero-slideshow>
+    <div class="absolute inset-0 cursor-pointer" data-hero-slideshow>
       {heroBilder.map((bild, i) => (
         <div class="absolute inset-0 overflow-hidden" style={`opacity: ${i === 0 ? 1 : 0}`} data-hero-slide>
           <img
             src={bild.src}
             alt={bild.alt}
             class:list={['w-full h-full object-cover', bild.positionClass]}
-            data-hero-slide-img
           />
         </div>
       ))}
@@ -82,12 +81,11 @@ const standorte = [
     </div>
 
     <script>
+      const slideshow = document.querySelector<HTMLElement>('[data-hero-slideshow]')
       const slides = document.querySelectorAll<HTMLElement>('[data-hero-slide]')
-      const images = document.querySelectorAll<HTMLElement>('[data-hero-slide-img]')
       const dots = document.querySelectorAll<HTMLElement>('[data-hero-dot]')
-      const INTERVAL = 6500
-      const FADE = 1500
-      const ZOOM = INTERVAL + FADE
+      const INTERVAL = 3500
+      const FADE = 800
 
       const setDot = (i: number, active: boolean) => {
         const dot = dots[i]
@@ -96,30 +94,39 @@ const standorte = [
         dot.style.background = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'
       }
 
-      const activate = (i: number) => {
-        const img = images[i]
-        img.style.transition = 'none'
-        img.style.transform = 'scale(1)'
-        void img.offsetWidth // reflow erzwingen, damit der Zoom neu startet
-        img.style.transition = `transform ${ZOOM}ms ease-out`
-        img.style.transform = 'scale(1.12)'
-        slides[i].style.transition = `opacity ${FADE}ms ease-in-out`
-        slides[i].style.opacity = '1'
-        setDot(i, true)
-      }
-
       if (slides.length > 1) {
         let current = 0
-        activate(current)
-        setInterval(() => {
+        let timer: ReturnType<typeof setInterval>
+
+        slides.forEach((s) => { s.style.transition = `opacity ${FADE}ms ease-in-out` })
+
+        const goTo = (i: number) => {
+          if (i === current) return
           slides[current].style.opacity = '0'
           setDot(current, false)
-          current = (current + 1) % slides.length
-          activate(current)
-        }, INTERVAL)
-      } else if (images[0]) {
-        images[0].style.transition = `transform ${ZOOM * 3}ms ease-out`
-        images[0].style.transform = 'scale(1.12)'
+          current = i
+          slides[current].style.opacity = '1'
+          setDot(current, true)
+        }
+
+        const startAutoplay = () => {
+          clearInterval(timer)
+          timer = setInterval(() => goTo((current + 1) % slides.length), INTERVAL)
+        }
+
+        startAutoplay()
+
+        document.querySelectorAll<HTMLElement>('[data-hero-dot-btn]').forEach((btn, i) => {
+          btn.addEventListener('click', () => {
+            goTo(i)
+            startAutoplay()
+          })
+        })
+
+        slideshow?.addEventListener('click', () => {
+          goTo((current + 1) % slides.length)
+          startAutoplay()
+        })
       }
     </script>
 
@@ -150,11 +157,13 @@ const standorte = [
       {heroBilder.length > 1 && (
         <div class="flex items-center gap-2 mt-1">
           {heroBilder.map((_, i) => (
-            <span
-              class="h-1.5 rounded-full transition-all duration-500"
-              style={`width: ${i === 0 ? '24px' : '8px'}; background: rgba(255,255,255,${i === 0 ? '0.9' : '0.4'})`}
-              data-hero-dot
-            ></span>
+            <button type="button" class="p-2 -m-2 cursor-pointer" aria-label={`Foto ${i + 1} anzeigen`} data-hero-dot-btn>
+              <span
+                class="block h-1.5 rounded-full transition-all duration-500"
+                style={`width: ${i === 0 ? '24px' : '8px'}; background: rgba(255,255,255,${i === 0 ? '0.9' : '0.4'})`}
+                data-hero-dot
+              ></span>
+            </button>
           ))}
         </div>
       )}
