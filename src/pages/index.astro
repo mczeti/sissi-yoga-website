@@ -59,9 +59,25 @@ const standorte = [
     link: { label: 'Mehr erfahren', href: '/schulen' },
   },
 ]
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': 'https://sissiyoga.at/#business',
+  name: 'Sissi – Familien Yogazeit',
+  description: 'Kinderyoga, Eltern-Kind-Yoga, Pränatal-Yoga und Seniorenyoga im Wienerwald.',
+  url: 'https://sissiyoga.at/',
+  image: 'https://sissiyoga.at/images/Kinderyoga-64.JPG',
+  logo: 'https://sissiyoga.at/logos/logo-colored.png',
+  telephone: '+436604860304',
+  email: 'sissi.zehetner@gmail.com',
+  founder: { '@type': 'Person', name: 'Elisabeth Zehetner' },
+  areaServed: ['Purkersdorf', 'Pressbaum', 'Tullnerbach', 'Wienerwald'].map((name) => ({ '@type': 'Place', name })),
+  knowsAbout: ['Kinderyoga', 'Familienyoga', 'Pränatal-Yoga', 'Postnatal-Yoga', 'Seniorenyoga'],
+  sameAs: ['https://www.instagram.com/sissi.familien.yogazeit/'],
+}
 ---
 
-<Layout>
+<Layout jsonLd={jsonLd}>
 
   <!-- HERO -->
   <section data-hero class="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden">
@@ -132,6 +148,8 @@ const standorte = [
 
     <!-- Content -->
     <div class="relative z-10 text-center px-6 flex flex-col items-center gap-5 translate-y-16 md:translate-y-24">
+
+      <h1 class="sr-only">Kinderyoga &amp; Familienyoga im Wienerwald – Purkersdorf, Pressbaum, Tullnerbach</h1>
 
       <!-- Logo rund auf milchigem Hintergrund -->
       <div class="flex items-center justify-center rounded-full p-6" style="background: rgba(255,255,255,0.10); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); width: 220px; height: 220px;">

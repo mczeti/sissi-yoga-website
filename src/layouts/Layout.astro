@@ -4,9 +4,22 @@ import Nav from '../components/Nav.astro'
 
 interface Props {
   title?: string
+  description?: string
+  image?: string
+  noindex?: boolean
+  jsonLd?: Record<string, unknown>
 }
 
-const { title = 'Sissi · Familien Yogazeit' } = Astro.props
+const {
+  title = 'Kinderyoga & Familienyoga im Wienerwald | Sissi Familien Yogazeit',
+  description = 'Sissi Familien Yogazeit – Kinderyoga, Eltern-Kind-Yoga, Pränatal-Yoga und Seniorenyoga im Wienerwald: Purkersdorf, Pressbaum und Tullnerbach.',
+  image = '/images/Kinderyoga-64.JPG',
+  noindex = false,
+  jsonLd,
+} = Astro.props
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href
+const imageUrl = new URL(image, Astro.site).href
 ---
 
 <!doctype html>
@@ -14,9 +27,22 @@ const { title = 'Sissi · Familien Yogazeit' } = Astro.props
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Sissi Familien Yogazeit – Yoga für Kinder, Familien, Schwangere und Senioren in Purkersdorf, Tullnerbach und Pressbaum." />
-    <link rel="icon" type="image/png" href="/logos/logo-circle.png" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="icon" type="image/png" href="/logos/logo-circle.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_AT" />
+    <meta property="og:site_name" content="Sissi Familien Yogazeit" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body>
     <Nav />

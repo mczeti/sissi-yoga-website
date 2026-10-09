@@ -3,16 +3,24 @@ import Layout from './Layout.astro'
 
 interface Props {
   title: string
+  seoTitle?: string
+  description?: string
+  noindex?: boolean
   hero?: string
   heroAlt?: string
   heroPosition?: string
   heroFit?: 'cover' | 'contain'
 }
 
-const { title, hero, heroAlt, heroPosition = 'center center', heroFit = 'cover' } = Astro.props
+const { title, seoTitle, description, noindex, hero, heroAlt, heroPosition = 'center center', heroFit = 'cover' } = Astro.props
 ---
 
-<Layout title={`${title} · Sissi Familien Yogazeit`}>
+<Layout
+  title={seoTitle ?? `${title} · Sissi Familien Yogazeit`}
+  description={description}
+  image={hero}
+  noindex={noindex}
+>
 
   <!-- Hero Bild -->
   {hero && (
