@@ -62,6 +62,21 @@ public/
 - Subheadlines: `text-xs font-bold tracking-widest uppercase`, Farbe green
 - Logos: `logo-white.png` auf dunklen Hintergründen, `logo-colored.png` auf hellen
 
+## Hero-Video (Branch `feature/hero-video`)
+
+Hochformat-Video im Story-Rahmen auf der Startseite (`src/components/HeroVideo.astro`).
+Ohne Videodateien zeigt der Rahmen nur das Poster.
+
+```bash
+brew install ffmpeg                                  # einmalig
+scripts/encode-hero-video.sh pfad/zum/original.mp4   # erzeugt public/video/hero/*
+```
+
+- Adaptives HLS (360p/540p/720p, `master.m3u8`); Safari nativ, andere Browser über `hls.js` (lazy), Fallback `hero-720.mp4`
+- Video lädt erst nach `load`, pausiert außerhalb des Viewports, nicht bei `prefers-reduced-motion`/Datensparmodus
+- Caption: Props `title`/`subtitle` an `<HeroVideo />`; Bogen-Variante: `<HeroVideo arch />`
+- Fonts (Young Serif, Outfit) self-hosted via `@fontsource`, neue Farb-Tokens `--color-sissi-{ink,forest,muted,terracotta,sage,chip,line,sand}`
+
 ## Architektur-Entscheidungen
 
 - **Stundenplan nicht als Nav-Item** – eingebettet auf Startseite (`id="stundenplan"`)

@@ -1,14 +1,30 @@
 @import "tailwindcss";
+@import "@fontsource/young-serif/400.css";
+@import "@fontsource/outfit/300.css";
+@import "@fontsource/outfit/400.css";
+@import "@fontsource/outfit/500.css";
+@import "@fontsource/outfit/600.css";
 
-@theme {
+@theme static {
   /* Sissi Brand Colors */
   --color-sissi-green: #8db33a;
   --color-sissi-olive: #4a5240;
   --color-sissi-circle: #596049;
   --color-sissi-cream: #f9f6f0;
 
-  /* Typography */
-  --font-sans: 'Inter', system-ui, sans-serif;
+  /* Video-Variante (Startseite) */
+  --color-sissi-ink:        #26382d;  /* Text dunkel */
+  --color-sissi-forest:     #2f4a3a;  /* Primär: Nav-CTA, Outline-Button */
+  --color-sissi-muted:      #4a5a4f;  /* Fließtext gedämpft */
+  --color-sissi-terracotta: #c9774f;  /* CTA, Eyebrows */
+  --color-sissi-sage:       #a8b79a;  /* Deko-Form */
+  --color-sissi-chip:       #e4e8dc;
+  --color-sissi-line:       #e4dfd2;
+  --color-sissi-sand:       #f6f1e7;  /* Hero-Hintergrund */
+
+  /* Typography (self-hosted via @fontsource, kein Google-Fonts-Request) */
+  --font-sans: 'Outfit', system-ui, sans-serif;
+  --font-serif: 'Young Serif', Georgia, serif;
 }
 
 body {

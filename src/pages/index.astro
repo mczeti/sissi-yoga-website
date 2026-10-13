@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro'
 import { useStoryblokApi } from '@storyblok/astro'
 import Stundenplan from '../components/Stundenplan.astro'
 import KommendeTermine from '../components/KommendeTermine.astro'
+import HeroVideo from '../components/HeroVideo.astro'
 
 // Flyer aus Storyblok laden
 let flyer: any[] = []
@@ -21,16 +22,6 @@ try {
 
 // Temporärer Hinweis: Kurspause wegen Retreat (blendet sich nach dem 28.9. beim nächsten Deploy automatisch aus)
 const zeigeKurspauseHinweis = new Date() < new Date('2026-09-29T00:00:00+02:00')
-
-// Hochformat-Fotos (vom Insta-Shooting) zeigen auf breiten Desktop-Screens einen ganz
-// anderen Bildausschnitt als auf Mobile (viel schmalerer sichtbarer Streifen) – daher
-// pro Foto ein eigener Fokuspunkt für Mobile und einen für Desktop (md:).
-const heroBilder = [
-  { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', positionClass: 'object-center' },
-  { src: '/images/achtsamkeit-ritual.jpg', alt: 'Achtsamkeits-Ritual im Garten', positionClass: 'object-[center_50%] md:object-[center_60%]' },
-  { src: '/images/Kinderyoga-10.JPG', alt: 'Kinderyoga-Kreis mit Klangschale', positionClass: 'object-[center_30%]' },
-  { src: '/images/seniorenyoga-hero.jpg', alt: 'Seniorenyoga mit Sissi', positionClass: 'object-center' },
-]
 
 const standorte = [
   {
@@ -81,121 +72,26 @@ const jsonLd = {
 
 <Layout jsonLd={jsonLd}>
 
-  <!-- HERO -->
-  <section data-hero class="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden">
-
-    <!-- Background slideshow -->
-    <div class="absolute inset-0 cursor-pointer" data-hero-slideshow>
-      {heroBilder.map((bild, i) => (
-        <div class="absolute inset-0 overflow-hidden" style={`opacity: ${i === 0 ? 1 : 0}`} data-hero-slide>
-          <img
-            src={bild.src}
-            alt={bild.alt}
-            class:list={['w-full h-full object-cover', bild.positionClass]}
-          />
-        </div>
-      ))}
-      <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.5) 100%)"></div>
-    </div>
-
-    <script>
-      const slideshow = document.querySelector<HTMLElement>('[data-hero-slideshow]')
-      const slides = document.querySelectorAll<HTMLElement>('[data-hero-slide]')
-      const dots = document.querySelectorAll<HTMLElement>('[data-hero-dot]')
-      const INTERVAL = 3500
-      const FADE = 800
-
-      const setDot = (i: number, active: boolean) => {
-        const dot = dots[i]
-        if (!dot) return
-        dot.style.width = active ? '24px' : '8px'
-        dot.style.background = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'
-      }
-
-      if (slides.length > 1) {
-        let current = 0
-        let timer: ReturnType<typeof setInterval>
-
-        slides.forEach((s) => { s.style.transition = `opacity ${FADE}ms ease-in-out` })
-
-        const goTo = (i: number) => {
-          if (i === current) return
-          slides[current].style.opacity = '0'
-          setDot(current, false)
-          current = i
-          slides[current].style.opacity = '1'
-          setDot(current, true)
-        }
-
-        const startAutoplay = () => {
-          clearInterval(timer)
-          timer = setInterval(() => goTo((current + 1) % slides.length), INTERVAL)
-        }
-
-        startAutoplay()
-
-        document.querySelectorAll<HTMLElement>('[data-hero-dot-btn]').forEach((btn, i) => {
-          btn.addEventListener('click', () => {
-            goTo(i)
-            startAutoplay()
-          })
-        })
-
-        slideshow?.addEventListener('click', () => {
-          goTo((current + 1) % slides.length)
-          startAutoplay()
-        })
-      }
-    </script>
-
-    <!-- Content -->
-    <div class="relative z-10 text-center px-6 flex flex-col items-center gap-5 translate-y-16 md:translate-y-24">
-
-      <h1 class="sr-only">Yoga im Wienerwald für Kinder, Familien &amp; Erwachsene – Pressbaum, Purkersdorf, Tullnerbach</h1>
-
-      <!-- Logo rund auf milchigem Hintergrund -->
-      <div class="flex items-center justify-center rounded-full p-6" style="background: rgba(255,255,255,0.10); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); width: 220px; height: 220px;">
-        <img
-          src="/logos/logo-white.png"
-          alt="Sissi Familien Yogazeit"
-          class="w-40 md:w-44"
-        />
+  <!-- HERO: Text + Hochformat-Video im Story-Rahmen -->
+  <section class="hero" style="background-color: var(--color-sissi-sand)">
+    <div class="hero-text">
+      <p class="eyebrow">Yoga im Wienerwald</p>
+      <h1>Zeit zum Atmen – für die ganze Familie.</h1>
+      <p class="lead">Kinderyoga, Mama-Baby-Yoga, Vinyasa und sanftes Yoga in Pressbaum, Purkersdorf und Tullnerbach.</p>
+      <div class="btns">
+        <a class="btn btn-primary" href="/#aktuelles">Workshops &amp; Kurse</a>
+        <a class="btn btn-outline" href="/#stundenplan">Stundenplan ansehen</a>
       </div>
-
-      <a
-        href="/#aktuelles"
-        class="mt-2 inline-flex items-center gap-3 px-8 py-3 rounded-full font-medium shadow-lg transition hover:scale-105"
-        style="background: rgba(255,255,255,0.18); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: white; border: 1px solid rgba(255,255,255,0.4)"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-        </svg>
-        Workshops & Kurse
-      </a>
-
-      <!-- Slide-Indikatoren -->
-      {heroBilder.length > 1 && (
-        <div class="flex items-center gap-2 mt-1">
-          {heroBilder.map((_, i) => (
-            <button type="button" class="p-2 -m-2 cursor-pointer" aria-label={`Foto ${i + 1} anzeigen`} data-hero-dot-btn>
-              <span
-                class="block h-1.5 rounded-full transition-all duration-500"
-                style={`width: ${i === 0 ? '24px' : '8px'}; background: rgba(255,255,255,${i === 0 ? '0.9' : '0.4'})`}
-                data-hero-dot
-              ></span>
-            </button>
-          ))}
-        </div>
-      )}
+      <div class="chips">
+        {['Pressbaum', 'Purkersdorf', 'Tullnerbach', 'Mobil'].map((ort) => <span>{ort}</span>)}
+      </div>
     </div>
 
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
-    </div>
+    <HeroVideo />
 
+    <a class="ig-link" href="https://www.instagram.com/sissi.familien.yogazeit" target="_blank" rel="noopener">
+      Mehr auf Instagram → @sissi.familien.yogazeit
+    </a>
   </section>
 
   <!-- HINWEIS: KURSPAUSE -->
@@ -221,82 +117,31 @@ const jsonLd = {
   )}
 
   <!-- STANDORTE -->
-  <section id="termine" class="py-20 px-8 md:px-16 bg-white">
-    <div class="max-w-6xl mx-auto">
+  <section id="termine" class="standorte" style="background-color: var(--color-sissi-sand)">
+    <header>
+      <p class="eyebrow">Standorte</p>
+      <h2>Yoga in deiner Nähe</h2>
+    </header>
 
-      <div class="text-center mb-12">
-        <p class="text-xs font-bold tracking-widest uppercase mb-2" style="color: var(--color-sissi-green)">Standorte</p>
-        <h2 class="text-4xl font-light" style="color: var(--color-sissi-olive)">Yoga in deiner Nähe</h2>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {standorte.map((ort) => (
-          <div class="standort-card group relative rounded-2xl overflow-hidden" style="height: 380px;">
-
-            <!-- Foto oder Platzhalter -->
-            {ort.foto ? (
-              <>
-                <img
-                  src={ort.foto}
-                  alt={`Yoga-Standort ${ort.name}`}
-                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  style={`object-position: ${ort.fotoPosition}`}
-                />
-                <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(74,82,64,0.15) 0%, rgba(74,82,64,0.0) 35%, rgba(74,82,64,0.75) 70%, rgba(74,82,64,0.95) 100%)"></div>
-              </>
-            ) : (
-              <>
-                <div class="absolute inset-0" style="background-color: var(--color-sissi-cream)"></div>
-                <div class="absolute inset-0 flex items-center justify-center opacity-20">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(74,82,64,0.05) 0%, rgba(74,82,64,0.0) 35%, rgba(74,82,64,0.4) 70%, rgba(74,82,64,0.65) 100%)"></div>
-              </>
-            )}
-
-            <!-- Top: Standort-Name -->
-            <div class="absolute top-0 left-0 right-0 p-5 flex items-center gap-2">
-              <div class="flex items-center gap-2 px-3 py-1.5 rounded-full"
-                style={ort.foto
-                  ? "background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"
-                  : "background: rgba(74,82,64,0.10);"}>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" style={ort.foto ? "color: white" : "color: var(--color-sissi-olive)"} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span class="text-sm font-semibold" style={ort.foto ? "color: white" : "color: var(--color-sissi-olive)"}>{ort.name}</span>
-              </div>
-            </div>
-
-            <!-- Bottom: Kurse + optionaler Link -->
-            <div class="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-2">
-              <ul class="flex flex-col gap-1.5">
-                {ort.kurse.map((kurs) => (
-                  <li class="flex items-center gap-2 text-sm" style={ort.foto ? "color: rgba(255,255,255,0.9)" : "color: var(--color-sissi-circle)"}>
-                    <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: var(--color-sissi-green)"></span>
-                    {kurs}
-                  </li>
-                ))}
-              </ul>
-              {ort.link && (
-                <a
-                  href={ort.link.href}
-                  class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
-                  style={ort.foto ? "color: rgba(255,255,255,0.8)" : "color: var(--color-sissi-green)"}
-                >
-                  {ort.link.label}
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-              )}
-            </div>
-
-          </div>
-        ))}
-      </div>
+    <div class="loc-grid">
+      {standorte.map((ort) => {
+        const Tag = ort.link ? 'a' : 'div'
+        return (
+          <Tag class="loc" href={ort.link?.href} aria-label={ort.link?.label}>
+            <img
+              src={ort.foto}
+              alt={`Yoga-Standort ${ort.name}`}
+              width="480"
+              height="360"
+              loading="lazy"
+              decoding="async"
+              style={`object-position: ${ort.fotoPosition}`}
+            />
+            <b>{ort.name}</b>
+            <span>{ort.kurse.join(' · ')}</span>
+          </Tag>
+        )
+      })}
     </div>
   </section>
 
@@ -361,3 +206,59 @@ const jsonLd = {
   </footer>
 
 </Layout>
+
+<style>
+  .eyebrow { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--color-sissi-terracotta); font-weight: 600; margin: 0; }
+
+  .hero {
+    display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 40px; align-items: center;
+    padding: 100px max(56px, calc((100vw - 1328px) / 2)) 80px; overflow-x: clip;
+  }
+  .hero-text { display: flex; flex-direction: column; gap: 26px; }
+  .hero h1 {
+    margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: 68px; line-height: 1.04;
+    color: var(--color-sissi-ink); text-wrap: pretty;
+  }
+  .lead { margin: 0; font-size: 19px; line-height: 1.6; color: var(--color-sissi-muted); max-width: 500px; font-weight: 300; }
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; padding: 15px 26px; border-radius: 999px;
+    font-weight: 500; font-size: 16px; text-decoration: none; transition: transform .2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn-primary { background: var(--color-sissi-terracotta); color: #fff; }
+  .btn-outline { border: 1.5px solid var(--color-sissi-forest); color: var(--color-sissi-forest); }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; font-size: 14px; color: var(--color-sissi-muted); }
+  .chips span { padding: 7px 14px; border-radius: 999px; background: var(--color-sissi-chip); }
+  .ig-link { display: none; font-weight: 500; font-size: 14px; color: var(--color-sissi-forest); text-align: center; }
+
+  .standorte {
+    padding: 0 max(56px, calc((100vw - 1328px) / 2)) 64px; display: flex; flex-direction: column; gap: 24px;
+  }
+  .standorte h2 { margin: 4px 0 0; font-family: var(--font-serif); font-weight: 400; font-size: 40px; color: var(--color-sissi-ink); }
+  .loc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .loc { display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: inherit; }
+  .loc img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; transition: transform .5s; }
+  a.loc:hover img { transform: scale(1.03); }
+  .loc b { font-family: var(--font-serif); font-weight: 400; font-size: 22px; color: var(--color-sissi-ink); }
+  .loc span { font-size: 14px; color: var(--color-sissi-muted); line-height: 1.5; }
+
+  @media (max-width: 899px) {
+    .hero { grid-template-columns: 1fr; gap: 0; padding: 88px 0 20px; }
+    .hero-text { display: contents; }
+    .hero .eyebrow, .hero h1, .lead { padding: 0 20px; }
+    .hero .eyebrow { font-size: 12px; }
+    .hero h1 { font-size: 38px; line-height: 1.08; margin: 16px 0; }
+    .lead { font-size: 16px; line-height: 1.55; }
+    .btns { order: 5; flex-direction: column; padding: 0 20px; gap: 10px; }
+    .btn { height: 52px; }
+    .ig-link { display: block; order: 6; padding: 14px 20px 0; }
+    .chips { display: none; }
+
+    .standorte { padding: 24px 0 36px; gap: 16px; }
+    .standorte header { padding: 0 20px; }
+    .standorte h2 { font-size: 30px; }
+    .loc-grid { display: flex; overflow-x: auto; gap: 14px; padding: 0 20px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .loc { flex: none; width: 240px; scroll-snap-align: start; }
+  }
+</style>
