@@ -6,8 +6,8 @@
 //   master.m3u8 + 360p/540p/720p → adaptives Streaming (HLS)
 //   hero-720.mp4                 → Fallback ohne HLS
 //   poster.jpg                   → erstes Frame
-// Segmente ohne Videodateien werden nicht angezeigt. Bei nur einem Segment entfallen
-// Tabs und das zweite Video – sobald ein zweites Video existiert, erscheinen sie automatisch.
+// Segmente ohne Videodateien erscheinen als Platzhalter ("Video folgt in Kürze") mit Foto,
+// bis die Dateien existieren – die Umschaltung ist also immer sichtbar.
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -21,6 +21,7 @@ interface Segment {
   chips: string[]
   cta: string
   href: string
+  placeholderPoster?: string
 }
 
 interface Props {
@@ -37,15 +38,15 @@ const available = segments
     const hls = existsSync(join(dir(s.slug), 'master.m3u8')) ? `/video/${s.slug}/master.m3u8` : undefined
     const mp4 = existsSync(join(dir(s.slug), 'hero-720.mp4')) ? `/video/${s.slug}/hero-720.mp4` : undefined
     const poster = `/video/${s.slug}/poster.jpg`
-    return { ...s, hls, mp4, poster, hasPoster: existsSync(join(dir(s.slug), 'poster.jpg')) }
+    return { ...s, hls, mp4, poster: hls || mp4 ? poster : s.placeholderPoster ?? poster, hasVideo: Boolean(hls || mp4) }
   })
-  .filter((s) => s.hls || s.mp4)
 
 const multi = available.length > 1
+const anyVideo = available.some((s) => s.hasVideo)
 const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chips: s.chips, cta: s.cta, href: s.href }]))
 ---
 
-{available.length > 0 && (
+{anyVideo && (
   <section class="videos" id="einblicke" data-videos data-multi={multi ? '' : undefined}>
     <header>
       <p class="eyebrow">Einblicke</p>
@@ -63,20 +64,30 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
     <div class="stage" data-stage>
       <div class="track">
         {available.map((s, i) => (
-          <div class:list={['frame', { 'is-active': i === 0 }]} data-seg={s.id}>
-            <video
-              poster={s.poster}
-              muted
-              loop
-              playsinline
-              preload="none"
-              aria-label={`${s.title} – ${s.subtitle}`}
-              data-hls={s.hls}
-              data-mp4={s.mp4}
-            ></video>
+          <div class:list={['frame', { 'is-active': i === 0, 'is-soon': !s.hasVideo }]} data-seg={s.id}>
+            {s.hasVideo ? (
+              <video
+                poster={s.poster}
+                muted
+                loop
+                playsinline
+                preload="none"
+                aria-label={`${s.title} – ${s.subtitle}`}
+                data-hls={s.hls}
+                data-mp4={s.mp4}
+              ></video>
+            ) : (
+              <img class="soon-img" src={s.poster} alt="" loading="lazy" decoding="async" />
+            )}
             <div class="caption">
-              <div><strong>{s.title}</strong><small>{s.subtitle}</small></div>
-              <button class="sound" type="button" aria-label="Ton einschalten">Ton</button>
+              {s.hasVideo ? (
+                <>
+                  <div><strong>{s.title}</strong><small>{s.subtitle}</small></div>
+                  <button class="sound" type="button" aria-label="Ton einschalten">Ton</button>
+                </>
+              ) : (
+                <div><strong>{s.tab}</strong><small>Video folgt in Kürze</small></div>
+              )}
             </div>
             {multi && (
               <button class="pick" type="button" data-seg={s.id} tabindex={i === 0 ? -1 : 0}>
@@ -121,7 +132,7 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
     const hlsInstances = new Map<HTMLVideoElement, { destroy(): void }>()
     const attached = new WeakSet<HTMLVideoElement>()
 
-    const videoOf = (f: HTMLElement) => f.querySelector('video')!
+    const videoOf = (f: HTMLElement) => f.querySelector('video')
 
     // Quelle erst anhängen, wenn das Video wirklich gebraucht wird (spart Daten bei inaktiven Videos)
     const attach = async (video: HTMLVideoElement) => {
@@ -167,6 +178,7 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
     const sync = () => {
       frames.forEach((f) => {
         const v = videoOf(f)
+        if (!v) return
         const isActive = f.dataset.seg === active
         if (isActive && inView && autoplay && !userPaused.has(f.dataset.seg!)) play(v)
         else if (!isActive || !inView) v.pause()
@@ -181,10 +193,13 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
         f.classList.toggle('is-active', on)
         const pick = f.querySelector<HTMLElement>('.pick')
         if (pick) pick.tabIndex = on ? -1 : 0
-        videoOf(f).muted = true
-        const b = f.querySelector<HTMLButtonElement>('.sound')!
-        b.textContent = 'Ton'
-        b.setAttribute('aria-label', 'Ton einschalten')
+        const v = videoOf(f)
+        const b = f.querySelector<HTMLButtonElement>('.sound')
+        if (v && b) {
+          v.muted = true
+          b.textContent = 'Ton'
+          b.setAttribute('aria-label', 'Ton einschalten')
+        }
       })
       const d = SEG[seg]
       if (d) {
@@ -212,7 +227,8 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
 
     frames.forEach((f) => {
       const v = videoOf(f)
-      const b = f.querySelector<HTMLButtonElement>('.sound')!
+      const b = f.querySelector<HTMLButtonElement>('.sound')
+      if (!v || !b) return
 
       b.addEventListener('click', (e) => {
         e.stopPropagation()
@@ -257,8 +273,9 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
     transition: width .45s cubic-bezier(.3, .7, .2, 1), height .45s cubic-bezier(.3, .7, .2, 1), box-shadow .45s;
   }
   .frame.is-active { --w: 340px; --h: 604px; box-shadow: 0 30px 70px rgba(38, 56, 45, .32); cursor: pointer; }
-  .frame video { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.6); transition: filter .45s; }
-  .frame.is-active video { filter: none; }
+  .frame video, .soon-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.6); transition: filter .45s; }
+  .frame.is-active video, .frame.is-active .soon-img { filter: none; }
+  .frame.is-soon.is-active { cursor: default; }
 
   .caption {
     position: absolute; left: 0; right: 0; bottom: 0; padding: 70px 20px 20px;
