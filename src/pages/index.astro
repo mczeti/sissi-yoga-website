@@ -54,6 +54,14 @@ const standorte = [
 ]
 // Video-Segmente (Dateien in public/video/<slug>/, erzeugt mit scripts/encode-hero-video.sh).
 // Segmente ohne Videodateien erscheinen als Platzhalter (Foto + "Video folgt in Kürze").
+// Rotierende Hero-Fotos (Hochformat-Fotos brauchen je einen eigenen Bildausschnitt)
+const heroBilder = [
+  { src: '/images/hero-allgemein.jpg', alt: 'Kinder im Kreis beim Yoga mit Sissi', position: 'center center' },
+  { src: '/images/achtsamkeit-ritual.jpg', alt: 'Achtsamkeits-Ritual im Garten', position: 'center 60%' },
+  { src: '/images/hero-kinderyoga.jpg', alt: 'Kinderyoga-Kreis mit Klangschale', position: 'center 30%' },
+  { src: '/images/seniorenyoga-hero.jpg', alt: 'Seniorenyoga mit Sissi', position: 'center center' },
+]
+
 const videoSegmente = [
   {
     id: 'kids',
@@ -110,8 +118,24 @@ const jsonLd = {
         <a class="btn btn-outline" href="/#stundenplan">Stundenplan</a>
       </div>
     </div>
-    <div class="banner">
-      <img src="/images/yoga-im-garten.jpg" alt="Yoga im Garten" fetchpriority="high" />
+    <div class="banner" data-hero-slideshow>
+      {heroBilder.map((bild, i) => (
+        <img
+          src={bild.src}
+          alt={bild.alt}
+          class="slide"
+          style={`object-position: ${bild.position}; opacity: ${i === 0 ? 1 : 0}`}
+          fetchpriority={i === 0 ? 'high' : undefined}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+          data-hero-slide
+        />
+      ))}
+      <div class="dots">
+        {heroBilder.map((_, i) => (
+          <button type="button" aria-label={`Foto ${i + 1} anzeigen`} data-hero-dot><span class:list={{ on: i === 0 }}></span></button>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -286,6 +310,38 @@ const jsonLd = {
 
 </Layout>
 
+<script>
+  const slideshow = document.querySelector<HTMLElement>('[data-hero-slideshow]')
+  const slides = document.querySelectorAll<HTMLElement>('[data-hero-slide]')
+  const dots = document.querySelectorAll<HTMLElement>('[data-hero-dot] span')
+  const INTERVAL = 3500
+
+  if (slideshow && slides.length > 1) {
+    let current = 0
+    let timer: ReturnType<typeof setInterval> | undefined
+
+    const goTo = (i: number) => {
+      if (i === current) return
+      slides[current].style.opacity = '0'
+      dots[current]?.classList.remove('on')
+      current = i
+      slides[current].style.opacity = '1'
+      dots[current]?.classList.add('on')
+    }
+    const restart = () => {
+      clearInterval(timer)
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      timer = setInterval(() => goTo((current + 1) % slides.length), INTERVAL)
+    }
+
+    restart()
+    slideshow.addEventListener('click', () => { goTo((current + 1) % slides.length); restart() })
+    document.querySelectorAll<HTMLElement>('[data-hero-dot]').forEach((btn, i) => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); goTo(i); restart() })
+    })
+  }
+</script>
+
 <style>
   .eyebrow { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--color-sissi-terracotta); font-weight: 600; margin: 0; }
 
@@ -296,8 +352,12 @@ const jsonLd = {
   .hero-text { display: flex; flex-direction: column; gap: 20px; }
   .hero h1 { margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: 52px; line-height: 1.08; color: var(--color-sissi-ink); text-wrap: pretty; }
   .hero-btns { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
-  .banner { height: 440px; border-radius: 28px; overflow: hidden; }
-  .banner img { width: 100%; height: 100%; object-fit: cover; }
+  .banner { position: relative; height: 440px; border-radius: 28px; overflow: hidden; cursor: pointer; background: var(--color-sissi-chip); }
+  .slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .8s ease-in-out; }
+  .dots { position: absolute; bottom: 14px; left: 0; right: 0; display: flex; justify-content: center; gap: 4px; }
+  .dots button { padding: 8px 4px; border: 0; background: none; cursor: pointer; }
+  .dots span { display: block; width: 8px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .45); transition: width .5s, background .5s; }
+  .dots span.on { width: 24px; background: rgba(255, 255, 255, .95); }
   .lbl-short { display: none; }
   .btn {
     display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; border-radius: 999px;
