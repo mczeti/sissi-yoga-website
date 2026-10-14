@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro'
 import { useStoryblokApi } from '@storyblok/astro'
 import Stundenplan from '../components/Stundenplan.astro'
 import KommendeTermine from '../components/KommendeTermine.astro'
-import HeroVideo from '../components/HeroVideo.astro'
+import VideoStage from '../components/VideoStage.astro'
 
 // Flyer aus Storyblok laden
 let flyer: any[] = []
@@ -52,6 +52,33 @@ const standorte = [
     link: { label: 'Mehr erfahren', href: '/schulen' },
   },
 ]
+// Video-Segmente (Dateien in public/video/<slug>/, erzeugt mit scripts/encode-hero-video.sh).
+// Segmente ohne Videodateien werden ausgeblendet; bei nur einem Video entfallen die Tabs.
+const videoSegmente = [
+  {
+    id: 'kids',
+    tab: 'Kinderyoga',
+    slug: 'kinder',
+    title: 'Kinderyoga & Waldyoga',
+    subtitle: 'Yoga. Bewegen. Spüren. Spielen.',
+    text: 'Tierposen, Geschichten und Atemspiele – Kinder entdecken Yoga mit allen Sinnen. Im Kurs, mit Mama oder Papa und direkt im Kindergarten oder in der Schule.',
+    chips: ['Kinderyoga', 'Mama-Baby Yoga', 'Yoga in Kindergärten & Schulen'],
+    cta: 'Alle Kinderkurse',
+    href: '/kinderyoga',
+  },
+  {
+    id: 'adults',
+    tab: 'Erwachsenenyoga',
+    slug: 'erwachsene',
+    title: 'Vinyasa Flow',
+    subtitle: 'Pressbaum · Dienstagabend',
+    text: 'Vom kraftvollen Vinyasa Flow bis zum sanften Yoga – Stunden für jedes Level, auch in der Schwangerschaft und für Seniorinnen und Senioren.',
+    chips: ['Vinyasa Yoga Flow', 'Schwangeren Yoga', 'Senioren Yoga', 'Yoga im Garten'],
+    cta: 'Alle Erwachsenenkurse',
+    href: '/workshops',
+  },
+]
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
@@ -72,27 +99,27 @@ const jsonLd = {
 
 <Layout jsonLd={jsonLd}>
 
-  <!-- HERO: Text + Hochformat-Video im Story-Rahmen -->
-  <section class="hero" style="background-color: var(--color-sissi-sand)">
-    <div class="hero-text">
+  <!-- HERO: kompakter Foto-Banner mit Text-Karte -->
+  <section class="hero">
+    <div class="banner">
+      <img src="/images/yoga-im-garten.jpg" alt="Yoga im Garten" fetchpriority="high" />
+    </div>
+    <div class="hero-card">
       <p class="eyebrow">Yoga im Wienerwald</p>
       <h1>Zeit zum Atmen – für die ganze Familie.</h1>
-      <p class="lead">Kinderyoga, Mama-Baby-Yoga, Vinyasa und sanftes Yoga in Pressbaum, Purkersdorf und Tullnerbach.</p>
-      <div class="btns">
-        <a class="btn btn-primary" href="/#aktuelles">Workshops &amp; Kurse</a>
-        <a class="btn btn-outline" href="/#stundenplan">Stundenplan ansehen</a>
-      </div>
-      <div class="chips">
-        {['Pressbaum', 'Purkersdorf', 'Tullnerbach', 'Mobil'].map((ort) => <span>{ort}</span>)}
+      <div class="hero-btns">
+        <a class="btn btn-primary" href="/#aktuelles"><span class="lbl-long">Workshops &amp; Kurse</span><span class="lbl-short">Kurse</span></a>
+        <a class="btn btn-outline" href="/#stundenplan">Stundenplan</a>
       </div>
     </div>
-
-    <HeroVideo />
-
-    <a class="ig-link" href="https://www.instagram.com/sissi.familien.yogazeit" target="_blank" rel="noopener">
-      Mehr auf Instagram → @sissi.familien.yogazeit
-    </a>
   </section>
+
+  <!-- VIDEO-SEKTION -->
+  <VideoStage
+    segments={videoSegmente}
+    headline="Wähle deine Yogazeit"
+    headlineSingle="So fühlt sich Yogazeit an"
+  />
 
   <!-- HINWEIS: KURSPAUSE -->
   {zeigeKurspauseHinweis && (
@@ -117,31 +144,82 @@ const jsonLd = {
   )}
 
   <!-- STANDORTE -->
-  <section id="termine" class="standorte" style="background-color: var(--color-sissi-sand)">
-    <header>
-      <p class="eyebrow">Standorte</p>
-      <h2>Yoga in deiner Nähe</h2>
-    </header>
+  <section id="termine" class="py-20 px-8 md:px-16 bg-white">
+    <div class="max-w-6xl mx-auto">
 
-    <div class="loc-grid">
-      {standorte.map((ort) => {
-        const Tag = ort.link ? 'a' : 'div'
-        return (
-          <Tag class="loc" href={ort.link?.href} aria-label={ort.link?.label}>
-            <img
-              src={ort.foto}
-              alt={`Yoga-Standort ${ort.name}`}
-              width="480"
-              height="360"
-              loading="lazy"
-              decoding="async"
-              style={`object-position: ${ort.fotoPosition}`}
-            />
-            <b>{ort.name}</b>
-            <span>{ort.kurse.join(' · ')}</span>
-          </Tag>
-        )
-      })}
+      <div class="text-center mb-12">
+        <p class="text-xs font-bold tracking-widest uppercase mb-2" style="color: var(--color-sissi-green)">Standorte</p>
+        <h2 class="text-4xl font-light" style="color: var(--color-sissi-olive)">Yoga in deiner Nähe</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {standorte.map((ort) => (
+          <div class="standort-card group relative rounded-2xl overflow-hidden" style="height: 380px;">
+
+            <!-- Foto oder Platzhalter -->
+            {ort.foto ? (
+              <>
+                <img
+                  src={ort.foto}
+                  alt={`Yoga-Standort ${ort.name}`}
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  style={`object-position: ${ort.fotoPosition}`}
+                />
+                <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(74,82,64,0.15) 0%, rgba(74,82,64,0.0) 35%, rgba(74,82,64,0.75) 70%, rgba(74,82,64,0.95) 100%)"></div>
+              </>
+            ) : (
+              <>
+                <div class="absolute inset-0" style="background-color: var(--color-sissi-cream)"></div>
+                <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20" style="color: var(--color-sissi-olive)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(74,82,64,0.05) 0%, rgba(74,82,64,0.0) 35%, rgba(74,82,64,0.4) 70%, rgba(74,82,64,0.65) 100%)"></div>
+              </>
+            )}
+
+            <!-- Top: Standort-Name -->
+            <div class="absolute top-0 left-0 right-0 p-5 flex items-center gap-2">
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                style={ort.foto
+                  ? "background: rgba(255,255,255,0.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"
+                  : "background: rgba(74,82,64,0.10);"}>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" style={ort.foto ? "color: white" : "color: var(--color-sissi-olive)"} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="text-sm font-semibold" style={ort.foto ? "color: white" : "color: var(--color-sissi-olive)"}>{ort.name}</span>
+              </div>
+            </div>
+
+            <!-- Bottom: Kurse + optionaler Link -->
+            <div class="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-2">
+              <ul class="flex flex-col gap-1.5">
+                {ort.kurse.map((kurs) => (
+                  <li class="flex items-center gap-2 text-sm" style={ort.foto ? "color: rgba(255,255,255,0.9)" : "color: var(--color-sissi-circle)"}>
+                    <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: var(--color-sissi-green)"></span>
+                    {kurs}
+                  </li>
+                ))}
+              </ul>
+              {ort.link && (
+                <a
+                  href={ort.link.href}
+                  class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+                  style={ort.foto ? "color: rgba(255,255,255,0.8)" : "color: var(--color-sissi-green)"}
+                >
+                  {ort.link.label}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              )}
+            </div>
+
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -210,55 +288,36 @@ const jsonLd = {
 <style>
   .eyebrow { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--color-sissi-terracotta); font-weight: 600; margin: 0; }
 
-  .hero {
-    display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 40px; align-items: center;
-    padding: 100px max(56px, calc((100vw - 1328px) / 2)) 80px; overflow-x: clip;
+  .hero { position: relative; max-width: 1440px; margin: 0 auto; padding: 80px 56px 0; }
+  .banner { height: 400px; border-radius: 28px; overflow: hidden; }
+  .banner img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-card {
+    position: absolute; left: 88px; bottom: 32px; max-width: 520px;
+    padding: 32px 36px; border-radius: 22px; background: var(--color-sissi-cream); display: flex; flex-direction: column; gap: 16px;
   }
-  .hero-text { display: flex; flex-direction: column; gap: 26px; }
-  .hero h1 {
-    margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: 68px; line-height: 1.04;
-    color: var(--color-sissi-ink); text-wrap: pretty;
-  }
-  .lead { margin: 0; font-size: 19px; line-height: 1.6; color: var(--color-sissi-muted); max-width: 500px; font-weight: 300; }
-  .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-card h1 { margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: 40px; line-height: 1.1; color: var(--color-sissi-ink); text-wrap: pretty; }
+  .hero-btns { display: flex; gap: 12px; margin-top: 4px; }
+  .lbl-short { display: none; }
   .btn {
-    display: inline-flex; align-items: center; justify-content: center; padding: 15px 26px; border-radius: 999px;
-    font-weight: 500; font-size: 16px; text-decoration: none; transition: transform .2s;
+    display: inline-flex; align-items: center; justify-content: center; padding: 13px 22px; border-radius: 999px;
+    font-weight: 500; font-size: 15px; text-decoration: none; transition: transform .2s;
   }
   .btn:hover { transform: scale(1.05); }
   .btn-primary { background: var(--color-sissi-terracotta); color: #fff; }
   .btn-outline { border: 1.5px solid var(--color-sissi-forest); color: var(--color-sissi-forest); }
-  .chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; font-size: 14px; color: var(--color-sissi-muted); }
-  .chips span { padding: 7px 14px; border-radius: 999px; background: var(--color-sissi-chip); }
-  .ig-link { display: none; font-weight: 500; font-size: 14px; color: var(--color-sissi-forest); text-align: center; }
-
-  .standorte {
-    padding: 0 max(56px, calc((100vw - 1328px) / 2)) 64px; display: flex; flex-direction: column; gap: 24px;
-  }
-  .standorte h2 { margin: 4px 0 0; font-family: var(--font-serif); font-weight: 400; font-size: 40px; color: var(--color-sissi-ink); }
-  .loc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-  .loc { display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: inherit; }
-  .loc img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; transition: transform .5s; }
-  a.loc:hover img { transform: scale(1.03); }
-  .loc b { font-family: var(--font-serif); font-weight: 400; font-size: 22px; color: var(--color-sissi-ink); }
-  .loc span { font-size: 14px; color: var(--color-sissi-muted); line-height: 1.5; }
 
   @media (max-width: 899px) {
-    .hero { grid-template-columns: 1fr; gap: 0; padding: 88px 0 20px; }
-    .hero-text { display: contents; }
-    .hero .eyebrow, .hero h1, .lead { padding: 0 20px; }
-    .hero .eyebrow { font-size: 12px; }
-    .hero h1 { font-size: 38px; line-height: 1.08; margin: 16px 0; }
-    .lead { font-size: 16px; line-height: 1.55; }
-    .btns { order: 5; flex-direction: column; padding: 0 20px; gap: 10px; }
-    .btn { height: 52px; }
-    .ig-link { display: block; order: 6; padding: 14px 20px 0; }
-    .chips { display: none; }
-
-    .standorte { padding: 24px 0 36px; gap: 16px; }
-    .standorte header { padding: 0 20px; }
-    .standorte h2 { font-size: 30px; }
-    .loc-grid { display: flex; overflow-x: auto; gap: 14px; padding: 0 20px; scroll-snap-type: x mandatory; scrollbar-width: none; }
-    .loc { flex: none; width: 240px; scroll-snap-align: start; }
+    .hero { padding: 72px 12px 0; }
+    .banner { height: 240px; border-radius: 24px; }
+    .hero-card {
+      position: relative; left: auto; bottom: auto; margin: -56px 12px 0; max-width: none; padding: 24px 22px; border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(38, 56, 45, .12); gap: 12px;
+    }
+    .eyebrow { font-size: 12px; }
+    .hero-card h1 { font-size: 30px; line-height: 1.12; }
+    .hero-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .hero-btns .btn { height: 48px; padding: 0; }
+    .lbl-long { display: none; }
+    .lbl-short { display: inline; }
   }
 </style>

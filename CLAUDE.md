@@ -62,20 +62,19 @@ public/
 - Subheadlines: `text-xs font-bold tracking-widest uppercase`, Farbe green
 - Logos: `logo-white.png` auf dunklen Hintergründen, `logo-colored.png` auf hellen
 
-## Hero-Video (Branch `feature/hero-video`)
+## Video-Sektion (Branch `feature/hero-video`)
 
-Hochformat-Video im Story-Rahmen auf der Startseite (`src/components/HeroVideo.astro`).
-Ohne Videodateien zeigt der Rahmen nur das Poster.
+Startseite: kompakter Foto-Banner mit Text-Karte, darunter Video-Sektion „Wähle deine Yogazeit“ (`src/components/VideoStage.astro`, Segmente in `src/pages/index.astro` → `videoSegmente`).
+Pro Segment ein Hochformat-Video in `public/video/<slug>/` (`kinder`, `erwachsene`). Segmente ohne Dateien werden ausgeblendet; mit nur einem Video entfallen Tabs und Nachbar-Video.
 
 ```bash
-brew install ffmpeg                                  # einmalig
-scripts/encode-hero-video.sh pfad/zum/original.mp4   # erzeugt public/video/hero/*
+scripts/encode-hero-video.sh kinder "pfad/zum/original.mp4"       # ffmpeg nötig (brew install ffmpeg)
+scripts/encode-hero-video.sh erwachsene "pfad/zum/zweiten.mp4"    # aktiviert automatisch die Tabs
 ```
 
-- Adaptives HLS (360p/540p/720p, `master.m3u8`); Safari nativ, andere Browser über `hls.js` (lazy), Fallback `hero-720.mp4`
-- Video lädt erst nach `load`, pausiert außerhalb des Viewports, nicht bei `prefers-reduced-motion`/Datensparmodus
-- Caption: Props `title`/`subtitle` an `<HeroVideo />`; Bogen-Variante: `<HeroVideo arch />`
-- Fonts (Young Serif, Outfit) self-hosted via `@fontsource`, neue Farb-Tokens `--color-sissi-{ink,forest,muted,terracotta,sage,chip,line,sand}`
+- Adaptives HLS (360p/540p/720p, `master.m3u8`, mit Ton); Safari nativ, andere Browser über `hls.js` (lazy), Fallback `hero-720.mp4`
+- Nur das aktive Video wird geladen/gespielt, erst wenn die Bühne sichtbar ist; nicht bei `prefers-reduced-motion`/Datensparmodus (dann Tippen = Start)
+- Fonts (Young Serif, Outfit) self-hosted via `@fontsource`, neue Farb-Tokens `--color-sissi-{ink,forest,muted,terracotta,sage,chip,line,sand,off}`
 
 ## Architektur-Entscheidungen
 

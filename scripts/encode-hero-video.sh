@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
-# Erzeugt aus einem Hochformat-Original (9:16, z.B. Instagram-Export) alles, was die Startseite braucht:
-#   public/video/hero/master.m3u8 + 360p/540p/720p   adaptives HLS (Player wählt Qualität nach Bandbreite)
-#   public/video/hero/hero-720.mp4                   Fallback für Browser ohne HLS
-#   public/video/hero/poster.jpg                     erstes Frame
+# Erzeugt aus einem Hochformat-Original (9:16, z.B. Instagram-Export) alles, was die Video-Sektion braucht:
+#   public/video/<slug>/master.m3u8 + 360p/540p/720p   adaptives HLS (Player wählt Qualität nach Bandbreite)
+#   public/video/<slug>/hero-720.mp4                   Fallback für Browser ohne HLS
+#   public/video/<slug>/poster.jpg                     erstes Frame
 #
-# Nutzung:  scripts/encode-hero-video.sh pfad/zum/original.mp4
+# Nutzung:  scripts/encode-hero-video.sh <slug> pfad/zum/original.mp4
+#   slug = kinder | erwachsene  (muss zu den Segmenten in src/pages/index.astro passen)
 # Voraussetzung: ffmpeg (brew install ffmpeg)
 set -euo pipefail
 
-IN="${1:?Nutzung: $0 <video.mp4>}"
-OUT="$(cd "$(dirname "$0")/.." && pwd)/public/video/hero"
+SLUG="${1:?Nutzung: $0 <slug> <video.mp4>}"
+IN="${2:?Nutzung: $0 <slug> <video.mp4>}"
+OUT="$(cd "$(dirname "$0")/.." && pwd)/public/video/$SLUG"
 command -v ffmpeg >/dev/null || { echo "ffmpeg fehlt: brew install ffmpeg" >&2; exit 1; }
 
 mkdir -p "$OUT"

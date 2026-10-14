@@ -19,7 +19,8 @@
   --color-sissi-terracotta: #c9774f;  /* CTA, Eyebrows */
   --color-sissi-sage:       #a8b79a;  /* Deko-Form */
   --color-sissi-chip:       #e4e8dc;
-  --color-sissi-line:       #e4dfd2;
+  --color-sissi-line:       #d9d2c2;
+  --color-sissi-off:        #8a9488;  /* Tab inaktiv */
   --color-sissi-sand:       #f6f1e7;  /* Hero-Hintergrund */
 
   /* Typography (self-hosted via @fontsource, kein Google-Fonts-Request) */
