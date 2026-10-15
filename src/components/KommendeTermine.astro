@@ -101,14 +101,14 @@ const counts = {
         })}
 
         {/* ---------- Filter ---------- */}
-        <div class="flex flex-wrap justify-center gap-2 mb-10" data-filter>
+        <div id="termin-filter" class="flex flex-wrap justify-center gap-2 mb-8 sm:mb-10" data-filter>
           <button type="button" data-f="all" data-active>Alle <span class="opacity-50">{counts.all}</span></button>
           <button type="button" data-f="kinder">Kinderyoga <span class="opacity-50">{counts.kinder}</span></button>
           <button type="button" data-f="erwachsene">Erwachsenenyoga <span class="opacity-50">{counts.erwachsene}</span></button>
         </div>
 
         {/* ---------- Grid ---------- */}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-grid>
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6" data-grid>
           {restSorted.map((f) => {
             const g = GROUPS[grpOf(f)]
             const past = isPast(f)
@@ -129,9 +129,9 @@ const counts = {
                   {f.ausgebucht && <div class="sold-band">Ausgebucht</div>}
                   {past && <div class="past-band">Vergangen</div>}
                 </Tag>
-                <div class="p-4">
-                  <span class="inline-block text-[11px] font-semibold tracking-wide px-2.5 py-1 rounded-full mb-2" style={`color:${g.color}; background: color-mix(in srgb, ${g.color} 14%, white)`}>{g.label}</span>
-                  {f.titel && <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{f.titel}</p>}
+                <div class="p-3 sm:p-4">
+                  <span class="inline-block text-[10px] sm:text-[11px] font-semibold tracking-wide px-2 sm:px-2.5 py-1 rounded-full mb-2" style={`color:${g.color}; background: color-mix(in srgb, ${g.color} 14%, white)`}>{g.label}</span>
+                  {f.titel && <p class="font-semibold text-xs sm:text-sm leading-snug" style="color: var(--color-sissi-olive)">{f.titel}</p>}
                   {f.ausgebucht ? (
                     <a href="/kontakt" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
                   ) : (
@@ -148,6 +148,9 @@ const counts = {
 </section>
 
 <style>
+  /* Platz für die fixe Navigation beim Hinscrollen */
+  #termin-filter { scroll-margin-top: 96px; }
+
   /* Filter-Pills */
   [data-filter] button {
     font-size: .875rem;
@@ -194,18 +197,46 @@ const counts = {
 <script>
   const sec = document.getElementById('aktuelles')
   if (sec) {
+    const bar = document.getElementById('termin-filter')
     const pills = Array.from(sec.querySelectorAll('[data-filter] button')) as HTMLElement[]
     const cards = Array.from(sec.querySelectorAll('[data-grid] [data-group]')) as HTMLElement[]
-    pills.forEach((pill) => {
-      pill.addEventListener('click', () => {
-        pills.forEach((p) => p.removeAttribute('data-active'))
-        pill.setAttribute('data-active', '')
-        const f = (pill as HTMLElement).dataset.f
-        cards.forEach((c) => {
-          const show = f === 'all' || c.dataset.group === f
-          c.style.display = show ? '' : 'none'
-        })
+
+    const setFilter = (f: string) => {
+      pills.forEach((p) => (p.dataset.f === f ? p.setAttribute('data-active', '') : p.removeAttribute('data-active')))
+      cards.forEach((c) => {
+        c.style.display = f === 'all' || c.dataset.group === f ? '' : 'none'
       })
+    }
+    pills.forEach((pill) => pill.addEventListener('click', () => setFilter(pill.dataset.f || 'all')))
+
+    // Deep-Links: /#aktuelles-kinder bzw. /#aktuelles-erwachsene wählen den Filter und scrollen zu den Flyern
+    const HASH = /^#aktuelles-(kinder|erwachsene)$/
+    const scrollToFilter = () => bar?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const applyHash = (hash: string, scroll: boolean) => {
+      const m = hash.match(HASH)
+      if (!m) return false
+      setFilter(m[1])
+      if (scroll) scrollToFilter()
+      return true
+    }
+
+    // Klick auf Links zur gleichen Seite (auch wenn der Hash schon gesetzt ist)
+    document.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest('a[href*="#aktuelles-"]') as HTMLAnchorElement | null
+      if (!a) return
+      const url = new URL(a.href, location.href)
+      if (url.pathname !== location.pathname || !HASH.test(url.hash)) return
+      e.preventDefault()
+      history.replaceState(null, '', url.hash)
+      applyHash(url.hash, true)
     })
+
+    // Aufruf von einer anderen Seite oder mit Hash: Filter sofort setzen, nach dem Laden hinscrollen
+    if (applyHash(location.hash, false)) {
+      const go = () => setTimeout(scrollToFilter, 150)
+      if (document.readyState === 'complete') go()
+      else window.addEventListener('load', go, { once: true })
+    }
+    window.addEventListener('hashchange', () => applyHash(location.hash, true))
   }
 </script>

@@ -91,16 +91,12 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
                 ))}
               </div>
             )}
-            <div class="caption">
-              {s.hasVideo ? (
-                <>
-                  <div><strong>{s.title}</strong><small>{s.subtitle}</small></div>
-                  <button class="sound" type="button" aria-label="Ton einschalten">Ton</button>
-                </>
-              ) : (
-                <div><strong>{s.tab}</strong><small>Video folgt in Kürze</small></div>
-              )}
-            </div>
+            {s.hasVideo && (
+              <div class="caption">
+                <div><strong>{s.title}</strong><small>{s.subtitle}</small></div>
+                <button class="sound" type="button" aria-label="Ton einschalten">Ton</button>
+              </div>
+            )}
             {multi && (
               <button class="pick" type="button" data-seg={s.id} tabindex={i === 0 ? -1 : 0}>
                 <i aria-hidden="true">▶</i>{s.tab} ansehen
