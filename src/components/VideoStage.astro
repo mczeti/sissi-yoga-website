@@ -273,7 +273,7 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
         st.slides[st.current].style.opacity = '1'
       })
     }
-    if (soonState.length) setInterval(rotate, 3500)
+    if (soonState.length) setInterval(rotate, 2500)
 
     new IntersectionObserver(([e]) => { inView = e.isIntersecting; sync() }, { threshold: 0.35 }).observe(stage)
     addEventListener('resize', center)
