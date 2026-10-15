@@ -1,0 +1,370 @@
+---
+// Video-Sektion "Wähle deine Yogazeit": Hochformat-Videos in Bühne mit Tab-Umschaltung.
+//
+// Pro Segment liegen die Dateien in public/video/<slug>/ (erzeugt mit
+// scripts/encode-hero-video.sh <slug> <original.mp4>):
+//   master.m3u8 + 360p/540p/720p → adaptives Streaming (HLS)
+//   hero-720.mp4                 → Fallback ohne HLS
+//   poster.jpg                   → erstes Frame
+// Segmente ohne Videodateien erscheinen als Platzhalter ("Video folgt in Kürze") mit Foto,
+// bis die Dateien existieren – die Umschaltung ist also immer sichtbar.
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
+
+interface Segment {
+  id: string
+  tab: string
+  slug: string
+  title: string
+  subtitle: string
+  text: string
+  chips: string[]
+  cta: string
+  href: string
+  placeholderPhotos?: { src: string; position: string }[]
+}
+
+interface Props {
+  segments: Segment[]
+  headline: string
+  headlineSingle: string
+}
+
+const { segments, headline, headlineSingle } = Astro.props
+
+const dir = (slug: string) => join(process.cwd(), 'public/video', slug)
+const available = segments
+  .map((s) => {
+    const hls = existsSync(join(dir(s.slug), 'master.m3u8')) ? `/video/${s.slug}/master.m3u8` : undefined
+    const mp4 = existsSync(join(dir(s.slug), 'hero-720.mp4')) ? `/video/${s.slug}/hero-720.mp4` : undefined
+    const poster = `/video/${s.slug}/poster.jpg`
+    return { ...s, hls, mp4, poster, hasVideo: Boolean(hls || mp4) }
+  })
+
+const multi = available.length > 1
+const anyVideo = available.some((s) => s.hasVideo)
+const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chips: s.chips, cta: s.cta, href: s.href }]))
+---
+
+{anyVideo && (
+  <section class="videos" id="einblicke" data-videos data-multi={multi ? '' : undefined}>
+    <header>
+      <p class="eyebrow">Einblicke</p>
+      <h2>{multi ? headline : headlineSingle}</h2>
+    </header>
+
+    {multi && (
+      <div class="tabs" role="tablist" aria-label="Yoga-Angebot">
+        {available.map((s, i) => (
+          <button class="tab" role="tab" type="button" data-seg={s.id} aria-selected={i === 0 ? 'true' : 'false'}>{s.tab}</button>
+        ))}
+      </div>
+    )}
+
+    <div class="stage" data-stage>
+      <div class="track">
+        {available.map((s, i) => (
+          <div class:list={['frame', { 'is-active': i === 0, 'is-soon': !s.hasVideo }]} data-seg={s.id}>
+            {s.hasVideo ? (
+              <video
+                poster={s.poster}
+                muted
+                loop
+                playsinline
+                preload="none"
+                aria-label={`${s.title} – ${s.subtitle}`}
+                data-hls={s.hls}
+                data-mp4={s.mp4}
+              ></video>
+            ) : (
+              <div class="soon-slides" data-soon>
+                {(s.placeholderPhotos ?? []).map((foto, k) => (
+                  <img
+                    class="soon-img"
+                    src={foto.src}
+                    alt=""
+                    style={`object-position: ${foto.position}; opacity: ${k === 0 ? 1 : 0}`}
+                    loading={k === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    data-soon-slide
+                  />
+                ))}
+              </div>
+            )}
+            <div class="caption">
+              {s.hasVideo ? (
+                <>
+                  <div><strong>{s.title}</strong><small>{s.subtitle}</small></div>
+                  <button class="sound" type="button" aria-label="Ton einschalten">Ton</button>
+                </>
+              ) : (
+                <div><strong>{s.tab}</strong><small>Video folgt in Kürze</small></div>
+              )}
+            </div>
+            {multi && (
+              <button class="pick" type="button" data-seg={s.id} tabindex={i === 0 ? -1 : 0}>
+                <i aria-hidden="true">▶</i>{s.tab} ansehen
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="seg-info" aria-live="polite">
+      <p id="segText">{available[0].text}</p>
+      <div class="chips" id="segChips">{available[0].chips.map((c) => <span>{c}</span>)}</div>
+      <a class="btn btn-primary" id="segCta" href={available[0].href}>{available[0].cta}</a>
+    </div>
+
+    <script type="application/json" id="segData" set:html={JSON.stringify(data)} />
+  </section>
+)}
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-videos]')
+
+  if (root) {
+    const SEG: Record<string, { text: string; chips: string[]; cta: string; href: string }> =
+      JSON.parse(document.getElementById('segData')!.textContent || '{}')
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!
+    const track = root.querySelector<HTMLElement>('.track')!
+    const frames = [...root.querySelectorAll<HTMLElement>('.frame')]
+    const tabs = [...root.querySelectorAll<HTMLElement>('.tab')]
+    const mobile = matchMedia('(max-width: 899px)')
+
+    const conn = (navigator as any).connection
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const saveData = Boolean(conn?.saveData) || /(^|-)2g$/.test(conn?.effectiveType ?? '')
+    const autoplay = !reduceMotion && !saveData
+
+    let active = frames[0].dataset.seg!
+    let inView = false
+    const userPaused = new Set<string>()
+    const hlsInstances = new Map<HTMLVideoElement, { destroy(): void }>()
+    const attached = new WeakSet<HTMLVideoElement>()
+
+    const videoOf = (f: HTMLElement) => f.querySelector('video')
+
+    // Quelle erst anhängen, wenn das Video wirklich gebraucht wird (spart Daten bei inaktiven Videos)
+    const attach = async (video: HTMLVideoElement) => {
+      if (attached.has(video)) return
+      attached.add(video)
+      const { hls: hlsUrl, mp4 } = video.dataset
+
+      const playMp4 = () => {
+        hlsInstances.get(video)?.destroy()
+        hlsInstances.delete(video)
+        if (mp4) { video.src = mp4; video.load() }
+      }
+
+      if (hlsUrl && video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = hlsUrl // Safari/iOS: nativer HLS-Player
+      } else if (hlsUrl) {
+        try {
+          // hls.js nur für Browser ohne natives HLS (eigener Chunk)
+          const { default: Hls } = await import('hls.js')
+          if (!Hls.isSupported()) return playMp4()
+          const hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 12 })
+          hlsInstances.set(video, hls)
+          hls.on(Hls.Events.ERROR, (_e, d) => { if (d.fatal) playMp4() })
+          hls.loadSource(hlsUrl)
+          hls.attachMedia(video)
+        } catch {
+          playMp4()
+        }
+      } else {
+        playMp4()
+      }
+    }
+
+    const play = (video: HTMLVideoElement) => { attach(video).then(() => video.play().catch(() => {})) }
+
+    const center = () => {
+      if (!mobile.matches) { track.style.transform = ''; return }
+      const on = 270, off = 130, gap = 14
+      const idx = frames.findIndex((f) => f.dataset.seg === active)
+      track.style.transform = `translateX(${(stage.clientWidth - on) / 2 - idx * (off + gap)}px)`
+    }
+
+    const sync = () => {
+      frames.forEach((f) => {
+        const v = videoOf(f)
+        if (!v) return
+        const isActive = f.dataset.seg === active
+        if (isActive && inView && autoplay && !userPaused.has(f.dataset.seg!)) play(v)
+        else if (!isActive || !inView) v.pause()
+      })
+    }
+
+    const select = (seg: string) => {
+      active = seg
+      tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.seg === seg)))
+      frames.forEach((f) => {
+        const on = f.dataset.seg === seg
+        f.classList.toggle('is-active', on)
+        const pick = f.querySelector<HTMLElement>('.pick')
+        if (pick) pick.tabIndex = on ? -1 : 0
+        const v = videoOf(f)
+        const b = f.querySelector<HTMLButtonElement>('.sound')
+        if (v && b) {
+          v.muted = true
+          b.textContent = 'Ton'
+          b.setAttribute('aria-label', 'Ton einschalten')
+        }
+      })
+      const d = SEG[seg]
+      if (d) {
+        document.getElementById('segText')!.textContent = d.text
+        document.getElementById('segChips')!.innerHTML = d.chips.map((c) => `<span>${c}</span>`).join('')
+        const cta = document.getElementById('segCta') as HTMLAnchorElement
+        cta.textContent = d.cta
+        cta.href = d.href
+      }
+      center()
+      sync()
+    }
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t.dataset.seg!))
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]
+          n.focus()
+          select(n.dataset.seg!)
+        }
+      })
+    })
+    root.querySelectorAll<HTMLElement>('.pick').forEach((p) => p.addEventListener('click', () => select(p.dataset.seg!)))
+
+    frames.forEach((f) => {
+      const v = videoOf(f)
+      const b = f.querySelector<HTMLButtonElement>('.sound')
+      if (!v || !b) return
+
+      b.addEventListener('click', (e) => {
+        e.stopPropagation()
+        v.muted = !v.muted
+        b.textContent = v.muted ? 'Ton' : 'Stumm'
+        b.setAttribute('aria-label', v.muted ? 'Ton einschalten' : 'Ton ausschalten')
+        if (!v.muted) { userPaused.delete(f.dataset.seg!); play(v) }
+      })
+
+      // Tippen auf das aktive Video: Pause/Start (auch Weg zum Abspielen bei reduzierter Bewegung)
+      f.addEventListener('click', (e) => {
+        if (f.dataset.seg !== active || (e.target as HTMLElement).closest('.sound, .pick')) return
+        if (v.paused) { userPaused.delete(f.dataset.seg!); play(v) } else { userPaused.add(f.dataset.seg!); v.pause() }
+      })
+    })
+
+    // Platzhalter-Diashow: dreht nur, solange das Segment aktiv und sichtbar ist
+    const soonFrames = frames.filter((f) => f.querySelector('[data-soon-slide]'))
+    const soonState = soonFrames.map((f) => ({
+      f,
+      slides: [...f.querySelectorAll<HTMLElement>('[data-soon-slide]')],
+      current: 0,
+    }))
+    const rotate = () => {
+      if (reduceMotion || !inView) return
+      soonState.forEach((st) => {
+        if (st.f.dataset.seg !== active || st.slides.length < 2) return
+        st.slides[st.current].style.opacity = '0'
+        st.current = (st.current + 1) % st.slides.length
+        st.slides[st.current].style.opacity = '1'
+      })
+    }
+    if (soonState.length) setInterval(rotate, 2500)
+
+    new IntersectionObserver(([e]) => { inView = e.isIntersecting; sync() }, { threshold: 0.35 }).observe(stage)
+    addEventListener('resize', center)
+    select(active)
+  }
+</script>
+
+<style>
+  .eyebrow { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--color-sissi-terracotta); font-weight: 600; margin: 0; }
+
+  .videos { padding: 80px 56px; display: flex; flex-direction: column; align-items: center; gap: 36px; overflow-x: clip; }
+  .videos header { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .videos h2 { margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: 42px; color: var(--color-sissi-ink); }
+
+  .tabs { display: flex; gap: 40px; border-bottom: 1px solid var(--color-sissi-line); }
+  .tab {
+    padding: 12px 2px 14px; border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; background: none;
+    color: var(--color-sissi-off); font: 24px var(--font-serif); cursor: pointer; transition: color .25s, border-color .25s;
+  }
+  .tab[aria-selected="true"] { color: var(--color-sissi-ink); border-bottom-color: var(--color-sissi-terracotta); }
+
+  .stage { display: flex; align-items: center; justify-content: center; height: 660px; width: 100%; }
+  .track { display: flex; align-items: center; gap: 28px; transition: transform .45s cubic-bezier(.3, .7, .2, 1); }
+  .frame {
+    --w: 200px; --h: 356px; position: relative; flex: none; width: var(--w); height: var(--h); border-radius: 26px;
+    overflow: hidden; background: var(--color-sissi-ink); border: 6px solid #fff; box-shadow: 0 10px 24px rgba(38, 56, 45, .15);
+    transition: width .45s cubic-bezier(.3, .7, .2, 1), height .45s cubic-bezier(.3, .7, .2, 1), box-shadow .45s;
+  }
+  .frame.is-active { --w: 340px; --h: 604px; box-shadow: 0 30px 70px rgba(38, 56, 45, .32); cursor: pointer; }
+  .frame video, .soon-slides { width: 100%; height: 100%; display: block; }
+  .frame video { object-fit: cover; filter: saturate(.6); transition: filter .45s; }
+  .soon-slides { position: relative; filter: saturate(.6); transition: filter .45s; }
+  .soon-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .8s ease-in-out; }
+  .frame.is-active video, .frame.is-active .soon-slides { filter: none; }
+  .frame.is-soon.is-active { cursor: default; }
+
+  .caption {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 70px 20px 20px;
+    background: linear-gradient(transparent, rgba(20, 32, 25, .75)); color: #fff;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .frame.is-active .caption { opacity: 1; pointer-events: auto; }
+  .caption strong { display: block; font: 400 22px var(--font-serif); }
+  .caption small { font-size: 13px; opacity: .9; }
+  .sound {
+    width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .22); color: #fff;
+    font: 600 12px var(--font-sans); cursor: pointer; backdrop-filter: blur(6px); flex: none;
+  }
+
+  .pick {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    background: rgba(38, 56, 45, .35); color: #fff; text-align: center; padding: 16px; border: 0;
+    font: 400 20px/1.2 var(--font-serif); cursor: pointer; transition: opacity .3s;
+  }
+  .pick i {
+    width: 56px; height: 56px; border-radius: 50%; background: rgba(255, 255, 255, .9); color: var(--color-sissi-ink);
+    display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 18px; padding-left: 4px;
+  }
+  .frame.is-active .pick { opacity: 0; pointer-events: none; }
+
+  .seg-info { display: flex; flex-direction: column; align-items: center; gap: 18px; max-width: 640px; text-align: center; }
+  .seg-info p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--color-sissi-muted); font-weight: 300; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .chips :global(span) { padding: 8px 16px; border-radius: 999px; background: var(--color-sissi-chip); font-size: 14px; color: var(--color-sissi-forest); font-weight: 500; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; border-radius: 999px;
+    font-weight: 500; font-size: 16px; text-decoration: none; background: var(--color-sissi-terracotta); color: #fff; transition: transform .2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+
+  @media (max-width: 899px) {
+    .videos { padding: 48px 0; gap: 24px; }
+    .videos header { padding: 0 20px; }
+    .eyebrow { font-size: 12px; }
+    .videos h2 { font-size: 30px; }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; width: calc(100% - 40px); }
+    .tab { min-height: 48px; padding: 10px 0 12px; font-size: 19px; }
+    .stage { height: 500px; overflow: hidden; justify-content: flex-start; }
+    .track { gap: 14px; }
+    .frame { --w: 130px; --h: 231px; border-width: 5px; border-radius: 22px; }
+    .frame.is-active { --w: 270px; --h: 480px; }
+    .caption { padding: 60px 16px 16px; }
+    .caption strong { font-size: 20px; }
+    .caption small { font-size: 12px; }
+    .pick { font-size: 16px; gap: 10px; padding: 10px; }
+    .pick i { width: 44px; height: 44px; font-size: 14px; }
+    .seg-info { padding: 0 20px; gap: 16px; }
+    .seg-info p { font-size: 16px; line-height: 1.55; }
+    .chips { gap: 8px; }
+    .chips :global(span) { font-size: 13px; padding: 8px 14px; }
+    .btn { width: 100%; height: 52px; padding: 0; }
+  }
+</style>

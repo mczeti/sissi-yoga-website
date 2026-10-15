@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro'
 import { useStoryblokApi } from '@storyblok/astro'
 import Stundenplan from '../components/Stundenplan.astro'
 import KommendeTermine from '../components/KommendeTermine.astro'
+import VideoStage from '../components/VideoStage.astro'
 
 // Flyer aus Storyblok laden
 let flyer: any[] = []
@@ -22,24 +23,7 @@ try {
 // Temporärer Hinweis: Kurspause wegen Retreat (blendet sich nach dem 28.9. beim nächsten Deploy automatisch aus)
 const zeigeKurspauseHinweis = new Date() < new Date('2026-09-29T00:00:00+02:00')
 
-// Hochformat-Fotos (vom Insta-Shooting) zeigen auf breiten Desktop-Screens einen ganz
-// anderen Bildausschnitt als auf Mobile (viel schmalerer sichtbarer Streifen) – daher
-// pro Foto ein eigener Fokuspunkt für Mobile und einen für Desktop (md:).
-const heroBilder = [
-  { src: '/images/allgemein.JPG', alt: 'Kinder im Kreis beim Yoga mit Sissi', positionClass: 'object-center' },
-  { src: '/images/achtsamkeit-ritual.jpg', alt: 'Achtsamkeits-Ritual im Garten', positionClass: 'object-[center_50%] md:object-[center_60%]' },
-  { src: '/images/Kinderyoga-10.JPG', alt: 'Kinderyoga-Kreis mit Klangschale', positionClass: 'object-[center_30%]' },
-  { src: '/images/seniorenyoga-hero.jpg', alt: 'Seniorenyoga mit Sissi', positionClass: 'object-center' },
-]
-
 const standorte = [
-  {
-    name: 'Purkersdorf',
-    kurse: ['Mama Baby Yoga', 'Senioren Yoga', 'Kinderyoga'],
-    foto: '/images/standort-purkersdorf.jpg',
-    fotoPosition: 'center center',
-    link: { label: 'Yoga in Purkersdorf', href: '/yoga-purkersdorf' },
-  },
   {
     name: 'Tullnerbach',
     kurse: ['Yoga im Garten'],
@@ -48,10 +32,17 @@ const standorte = [
   },
   {
     name: 'Pressbaum',
-    kurse: ['Vinyasa Yoga Flow (alle Level)', 'Schwangeren Yoga'],
+    kurse: ['Vinyasa Yoga Flow (alle Level)', 'Schwangeren Yoga', 'Slow Vinyasa Yoga & Yoga Nidra'],
     foto: '/images/standort-pressbaum.jpg',
     fotoPosition: 'center 40%',
     link: { label: 'Yoga in Pressbaum', href: '/yoga-pressbaum' },
+  },
+  {
+    name: 'Purkersdorf',
+    kurse: ['Mama Baby Yoga', 'Senioren Yoga', 'Kinderyoga'],
+    foto: '/images/standort-purkersdorf.jpg',
+    fotoPosition: 'center center',
+    link: { label: 'Yoga in Purkersdorf', href: '/yoga-purkersdorf' },
   },
   {
     name: 'Mobil',
@@ -61,6 +52,60 @@ const standorte = [
     link: { label: 'Mehr erfahren', href: '/schulen' },
   },
 ]
+// Video-Segmente (Dateien in public/video/<slug>/, erzeugt mit scripts/encode-hero-video.sh).
+// Segmente ohne Videodateien erscheinen als Platzhalter (Foto + "Video folgt in Kürze").
+// Rotierende Hero-Fotos (Hochformat-Fotos brauchen je einen eigenen Bildausschnitt)
+const heroBilder = [
+  { src: '/images/achtsamkeit-ritual.jpg', alt: 'Achtsamkeits-Ritual im Garten', position: 'center 60%' },
+  { src: '/images/hero-allgemein.jpg', alt: 'Kinder im Kreis beim Yoga mit Sissi', position: 'center center' },
+  { src: '/images/seniorenyoga-hero.jpg', alt: 'Seniorenyoga mit Sissi', position: 'center center' },
+  { src: '/images/hero-kinderyoga.jpg', alt: 'Kinderyoga-Kreis mit Klangschale', position: 'center 30%' },
+]
+
+const videoSegmente = [
+  {
+    id: 'kids',
+    tab: 'Kinderyoga',
+    slug: 'kinder',
+    title: 'Kinderyoga & Waldyoga',
+    subtitle: 'Yoga. Bewegen. Spüren. Spielen.',
+    text: 'Tierposen, Geschichten und Atemspiele – Kinder entdecken Yoga mit allen Sinnen. Im Kurs, mit Mama oder Papa und direkt im Kindergarten oder in der Schule.',
+    chips: ['Kinderyoga', 'Mama-Baby Yoga', 'Yoga in Kindergärten & Schulen'],
+    cta: 'Alle Kinderkurse',
+    href: '/kinderyoga',
+  },
+  {
+    id: 'adults',
+    tab: 'Erwachsenenyoga',
+    slug: 'erwachsene',
+    title: 'Vinyasa Flow',
+    subtitle: 'Pressbaum · Dienstagabend',
+    text: 'Vom kraftvollen Vinyasa Flow bis zum sanften Yoga – Stunden für jedes Level, auch in der Schwangerschaft und für Seniorinnen und Senioren.',
+    chips: ['Vinyasa Yoga Flow', 'Schwangeren Yoga', 'Senioren Yoga', 'Yoga im Garten'],
+    cta: 'Alle Erwachsenenkurse',
+    href: '/workshops',
+    // Platzhalter-Diashow, bis das Erwachsenen-Video existiert (position = Bildausschnitt im Hochformat-Rahmen).
+    // Reihenfolge gemischt: Schwangeren-Fotos (1–5) kommen regelmäßig zwischen Sissis Fotos (6–8, 14–15) und Impressionen (9–13)
+    placeholderPhotos: [
+      { src: '/images/erwachsene-6.jpg', position: 'center center' },
+      { src: '/images/erwachsene-3.jpg', position: '18% center' },
+      { src: '/images/erwachsene-9.jpg', position: 'center center' },
+      { src: '/images/erwachsene-1.jpg', position: 'center center' },
+      { src: '/images/erwachsene-15.jpg', position: 'center center' },
+      { src: '/images/erwachsene-7.jpg', position: 'center center' },
+      { src: '/images/erwachsene-11.jpg', position: 'center center' },
+      { src: '/images/erwachsene-4.jpg', position: 'center center' },
+      { src: '/images/erwachsene-8.jpg', position: 'center center' },
+      { src: '/images/erwachsene-13.jpg', position: 'center center' },
+      { src: '/images/erwachsene-5.jpg', position: '39% center' },
+      { src: '/images/erwachsene-14.jpg', position: 'center center' },
+      { src: '/images/erwachsene-10.jpg', position: '45% center' },
+      { src: '/images/erwachsene-2.jpg', position: 'center center' },
+      { src: '/images/erwachsene-12.jpg', position: 'center center' },
+    ],
+  },
+]
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
@@ -79,124 +124,45 @@ const jsonLd = {
 }
 ---
 
-<Layout jsonLd={jsonLd}>
+<Layout title="Yoga im Wienerwald für Kinder und Erwachsene | Sissi Familien Yogazeit" jsonLd={jsonLd}>
 
-  <!-- HERO -->
-  <section data-hero class="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden">
-
-    <!-- Background slideshow -->
-    <div class="absolute inset-0 cursor-pointer" data-hero-slideshow>
-      {heroBilder.map((bild, i) => (
-        <div class="absolute inset-0 overflow-hidden" style={`opacity: ${i === 0 ? 1 : 0}`} data-hero-slide>
-          <img
-            src={bild.src}
-            alt={bild.alt}
-            class:list={['w-full h-full object-cover', bild.positionClass]}
-          />
-        </div>
-      ))}
-      <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.5) 100%)"></div>
-    </div>
-
-    <script>
-      const slideshow = document.querySelector<HTMLElement>('[data-hero-slideshow]')
-      const slides = document.querySelectorAll<HTMLElement>('[data-hero-slide]')
-      const dots = document.querySelectorAll<HTMLElement>('[data-hero-dot]')
-      const INTERVAL = 3500
-      const FADE = 800
-
-      const setDot = (i: number, active: boolean) => {
-        const dot = dots[i]
-        if (!dot) return
-        dot.style.width = active ? '24px' : '8px'
-        dot.style.background = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)'
-      }
-
-      if (slides.length > 1) {
-        let current = 0
-        let timer: ReturnType<typeof setInterval>
-
-        slides.forEach((s) => { s.style.transition = `opacity ${FADE}ms ease-in-out` })
-
-        const goTo = (i: number) => {
-          if (i === current) return
-          slides[current].style.opacity = '0'
-          setDot(current, false)
-          current = i
-          slides[current].style.opacity = '1'
-          setDot(current, true)
-        }
-
-        const startAutoplay = () => {
-          clearInterval(timer)
-          timer = setInterval(() => goTo((current + 1) % slides.length), INTERVAL)
-        }
-
-        startAutoplay()
-
-        document.querySelectorAll<HTMLElement>('[data-hero-dot-btn]').forEach((btn, i) => {
-          btn.addEventListener('click', () => {
-            goTo(i)
-            startAutoplay()
-          })
-        })
-
-        slideshow?.addEventListener('click', () => {
-          goTo((current + 1) % slides.length)
-          startAutoplay()
-        })
-      }
-    </script>
-
-    <!-- Content -->
-    <div class="relative z-10 text-center px-6 flex flex-col items-center gap-5 translate-y-16 md:translate-y-24">
-
-      <h1 class="sr-only">Yoga im Wienerwald für Kinder, Familien &amp; Erwachsene – Pressbaum, Purkersdorf, Tullnerbach</h1>
-
-      <!-- Logo rund auf milchigem Hintergrund -->
-      <div class="flex items-center justify-center rounded-full p-6" style="background: rgba(255,255,255,0.10); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); width: 220px; height: 220px;">
-        <img
-          src="/logos/logo-white.png"
-          alt="Sissi Familien Yogazeit"
-          class="w-40 md:w-44"
-        />
+  <!-- HERO: Text links, Foto rechts (ohne Überlappung) -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">Yoga im Wienerwald</p>
+      <h1>Yoga für Kinder und Erwachsene.</h1>
+      <div class="hero-btns">
+        <a class="btn btn-primary" href="/#aktuelles"><span class="lbl-long">Workshops &amp; Kurse</span><span class="lbl-short">Kurse</span></a>
+        <a class="btn btn-outline" href="/#stundenplan">Stundenplan</a>
       </div>
-
-      <a
-        href="/#aktuelles"
-        class="mt-2 inline-flex items-center gap-3 px-8 py-3 rounded-full font-medium shadow-lg transition hover:scale-105"
-        style="background: rgba(255,255,255,0.18); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: white; border: 1px solid rgba(255,255,255,0.4)"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-        </svg>
-        Workshops & Kurse
-      </a>
-
-      <!-- Slide-Indikatoren -->
-      {heroBilder.length > 1 && (
-        <div class="flex items-center gap-2 mt-1">
-          {heroBilder.map((_, i) => (
-            <button type="button" class="p-2 -m-2 cursor-pointer" aria-label={`Foto ${i + 1} anzeigen`} data-hero-dot-btn>
-              <span
-                class="block h-1.5 rounded-full transition-all duration-500"
-                style={`width: ${i === 0 ? '24px' : '8px'}; background: rgba(255,255,255,${i === 0 ? '0.9' : '0.4'})`}
-                data-hero-dot
-              ></span>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
-
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
+    <div class="banner" data-hero-slideshow>
+      {heroBilder.map((bild, i) => (
+        <img
+          src={bild.src}
+          alt={bild.alt}
+          class="slide"
+          style={`object-position: ${bild.position}; opacity: ${i === 0 ? 1 : 0}`}
+          fetchpriority={i === 0 ? 'high' : undefined}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+          data-hero-slide
+        />
+      ))}
+      <div class="dots">
+        {heroBilder.map((_, i) => (
+          <button type="button" aria-label={`Foto ${i + 1} anzeigen`} data-hero-dot><span class:list={{ on: i === 0 }}></span></button>
+        ))}
+      </div>
     </div>
-
   </section>
+
+  <!-- VIDEO-SEKTION -->
+  <VideoStage
+    segments={videoSegmente}
+    headline="Wähle deine Yogazeit"
+    headlineSingle="Wähle deine Yogazeit"
+  />
 
   <!-- HINWEIS: KURSPAUSE -->
   {zeigeKurspauseHinweis && (
@@ -361,3 +327,73 @@ const jsonLd = {
   </footer>
 
 </Layout>
+
+<script>
+  const slideshow = document.querySelector<HTMLElement>('[data-hero-slideshow]')
+  const slides = document.querySelectorAll<HTMLElement>('[data-hero-slide]')
+  const dots = document.querySelectorAll<HTMLElement>('[data-hero-dot] span')
+  const INTERVAL = 3500
+
+  if (slideshow && slides.length > 1) {
+    let current = 0
+    let timer: ReturnType<typeof setInterval> | undefined
+
+    const goTo = (i: number) => {
+      if (i === current) return
+      slides[current].style.opacity = '0'
+      dots[current]?.classList.remove('on')
+      current = i
+      slides[current].style.opacity = '1'
+      dots[current]?.classList.add('on')
+    }
+    const restart = () => {
+      clearInterval(timer)
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      timer = setInterval(() => goTo((current + 1) % slides.length), INTERVAL)
+    }
+
+    restart()
+    slideshow.addEventListener('click', () => { goTo((current + 1) % slides.length); restart() })
+    document.querySelectorAll<HTMLElement>('[data-hero-dot]').forEach((btn, i) => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); goTo(i); restart() })
+    })
+  }
+</script>
+
+<style>
+  .eyebrow { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--color-sissi-terracotta); font-weight: 600; margin: 0; }
+
+  .hero {
+    display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 56px; align-items: center;
+    max-width: 1440px; margin: 0 auto; padding: 96px 56px 24px;
+  }
+  .hero-text { display: flex; flex-direction: column; gap: 20px; }
+  .hero h1 { margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: 52px; line-height: 1.08; color: var(--color-sissi-ink); text-wrap: pretty; }
+  .hero-btns { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+  .banner { position: relative; height: 440px; border-radius: 28px; overflow: hidden; cursor: pointer; background: var(--color-sissi-chip); }
+  .slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .8s ease-in-out; }
+  .dots { position: absolute; bottom: 14px; left: 0; right: 0; display: flex; justify-content: center; gap: 4px; }
+  .dots button { padding: 8px 4px; border: 0; background: none; cursor: pointer; }
+  .dots span { display: block; width: 8px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .45); transition: width .5s, background .5s; }
+  .dots span.on { width: 24px; background: rgba(255, 255, 255, .95); }
+  .lbl-short { display: none; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; border-radius: 999px;
+    font-weight: 500; font-size: 15px; text-decoration: none; transition: transform .2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn-primary { background: var(--color-sissi-terracotta); color: #fff; }
+  .btn-outline { border: 1.5px solid var(--color-sissi-forest); color: var(--color-sissi-forest); }
+
+  @media (max-width: 899px) {
+    .hero { grid-template-columns: 1fr; gap: 0; padding: 72px 12px 0; }
+    .banner { order: -1; height: 240px; border-radius: 24px; }
+    .hero-text { padding: 24px 8px 0; gap: 14px; }
+    .eyebrow { font-size: 12px; }
+    .hero h1 { font-size: 32px; line-height: 1.12; }
+    .hero-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .hero-btns .btn { height: 48px; padding: 0; }
+    .lbl-long { display: none; }
+    .lbl-short { display: inline; }
+  }
+</style>

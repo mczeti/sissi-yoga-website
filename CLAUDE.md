@@ -62,6 +62,20 @@ public/
 - Subheadlines: `text-xs font-bold tracking-widest uppercase`, Farbe green
 - Logos: `logo-white.png` auf dunklen Hintergründen, `logo-colored.png` auf hellen
 
+## Video-Sektion (Branch `feature/hero-video`)
+
+Startseite: kompakter Foto-Banner mit Text-Karte, darunter Video-Sektion „Wähle deine Yogazeit“ (`src/components/VideoStage.astro`, Segmente in `src/pages/index.astro` → `videoSegmente`).
+Pro Segment ein Hochformat-Video in `public/video/<slug>/` (`kinder`, `erwachsene`). Segmente ohne Dateien werden ausgeblendet; mit nur einem Video entfallen Tabs und Nachbar-Video.
+
+```bash
+scripts/encode-hero-video.sh kinder "pfad/zum/original.mp4"       # ffmpeg nötig (brew install ffmpeg)
+scripts/encode-hero-video.sh erwachsene "pfad/zum/zweiten.mp4"    # aktiviert automatisch die Tabs
+```
+
+- Adaptives HLS (360p/540p/720p, `master.m3u8`, mit Ton); Safari nativ, andere Browser über `hls.js` (lazy), Fallback `hero-720.mp4`
+- Nur das aktive Video wird geladen/gespielt, erst wenn die Bühne sichtbar ist; nicht bei `prefers-reduced-motion`/Datensparmodus (dann Tippen = Start)
+- Fonts (Young Serif, Outfit) self-hosted via `@fontsource`, neue Farb-Tokens `--color-sissi-{ink,forest,muted,terracotta,sage,chip,line,sand,off}`
+
 ## Architektur-Entscheidungen
 
 - **Stundenplan nicht als Nav-Item** – eingebettet auf Startseite (`id="stundenplan"`)

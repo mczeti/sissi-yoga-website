@@ -5,7 +5,6 @@ const links = [
   { label: 'Senioren Yoga',   href: '/seniorenyoga' },
   { label: 'Schulen',         href: '/schulen' },
   { label: 'Workshops',       href: '/workshops' },
-  { label: 'Stundenplan',     href: '/#stundenplan' },
   { label: 'Über mich',       href: '/ueber-mich' },
   { label: 'Kontakt',         href: '/kontakt' },
 ]
@@ -37,18 +36,24 @@ const currentPath = Astro.url.pathname
       ))}
     </nav>
 
+    <a
+      href="/#stundenplan"
+      class="hidden md:inline-flex px-5 py-2.5 rounded-full text-sm font-medium transition hover:scale-105"
+      style="background-color: var(--color-sissi-forest); color: var(--color-sissi-cream)"
+    >Stundenplan</a>
+
     <!-- Mobile hamburger -->
-    <button id="menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Menü öffnen">
-      <span class="hamburger-bar w-6 h-0.5 rounded transition-all"></span>
-      <span class="hamburger-bar w-6 h-0.5 rounded transition-all"></span>
-      <span class="hamburger-bar w-6 h-0.5 rounded transition-all"></span>
+    <button id="menu-btn" class="md:hidden flex flex-col items-center justify-center gap-1.5 w-11 h-11 rounded-full" aria-label="Menü öffnen">
+      <span class="hamburger-bar w-5 h-0.5 rounded transition-all"></span>
+      <span class="hamburger-bar w-5 h-0.5 rounded transition-all"></span>
+      <span class="hamburger-bar w-5 h-0.5 rounded transition-all"></span>
     </button>
 
   </div>
 
   <!-- Mobile menu (immer cream, egal ob hero oder nicht) -->
   <div id="mobile-menu" class="hidden md:hidden px-6 pb-6 flex flex-col gap-4" style="background-color: var(--color-sissi-cream)">
-    {links.map(link => (
+    {[...links, { label: 'Stundenplan', href: '/#stundenplan' }].map(link => (
       <a
         href={link.href}
         class="text-base font-medium py-2 border-b border-black/5"
@@ -81,6 +86,7 @@ const currentPath = Astro.url.pathname
     navLinks.forEach(l => { l.style.color = 'white' })
     // Hamburger weiß
     hamburgerBars.forEach(b => { b.style.backgroundColor = 'white' })
+    if (menuBtn) menuBtn.style.backgroundColor = 'rgba(255,255,255,0.18)'
   }
 
   function setSolid() {
@@ -94,6 +100,7 @@ const currentPath = Astro.url.pathname
     navLinks.forEach(l => { l.style.color = 'var(--color-sissi-olive)' })
     // Hamburger olive
     hamburgerBars.forEach(b => { b.style.backgroundColor = 'var(--color-sissi-olive)' })
+    if (menuBtn) menuBtn.style.backgroundColor = 'var(--color-sissi-chip)'
   }
 
   function updateNav() {
