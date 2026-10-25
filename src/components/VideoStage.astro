@@ -156,6 +156,7 @@ const data = Object.fromEntries(available.map((s) => [s.id, { text: s.text, chip
 
       if (hlsUrl && video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = hlsUrl // Safari/iOS: nativer HLS-Player
+        video.load()
       } else if (hlsUrl) {
         try {
           // hls.js nur für Browser ohne natives HLS (eigener Chunk)
