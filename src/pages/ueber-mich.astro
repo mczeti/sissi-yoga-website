@@ -1,8 +1,11 @@
 ---
 import SubpageLayout from '../layouts/SubpageLayout.astro'
+import { PERSON_ID } from '../data/seo'
+
+const jsonLd = { '@type': 'ProfilePage', '@id': `${new URL(Astro.url.pathname, Astro.site).href}#webpage`, mainEntity: { '@id': PERSON_ID } }
 ---
 
-<SubpageLayout seoTitle="Über Sissi – Kinderyoga-Lehrerin im Wienerwald | Familien Yogazeit" description="Lerne Sissi kennen: Yogalehrerin für Kinder, Familien, Schwangere und Senioren in Purkersdorf, Pressbaum und Tullnerbach im Wienerwald." title="Über mich" hero="/images/sissi-ueberuns-2.jpeg" heroAlt="Sissi beim Meditieren im Garten" heroPosition="center 42%">
+<SubpageLayout seoTitle="Über Sissi – Kinderyoga-Lehrerin im Wienerwald | Familien Yogazeit" description="Lerne Sissi kennen: Yogalehrerin für Kinder, Familien, Schwangere und Senioren in Purkersdorf, Pressbaum und Tullnerbach im Wienerwald." title="Über mich" hero="/images/sissi-ueberuns-2.jpeg" jsonLd={jsonLd} heroAlt="Sissi beim Meditieren im Garten" heroPosition="center 42%">
 
   <!-- Intro -->
   <div class="grid md:grid-cols-2 gap-12 items-center mb-20">

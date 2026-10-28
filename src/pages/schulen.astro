@@ -1,8 +1,39 @@
 ---
 import SubpageLayout from '../layouts/SubpageLayout.astro'
+import Faq from '../components/Faq.astro'
+import { kurs } from '../data/seo'
+
+const jsonLd = [
+  kurs({
+    name: 'Kinderyoga für Kindergärten und Schulen',
+    description: 'Mobile Kinderyoga-Angebote im Wienerwald: einmalige Workshops, mehrwöchige Kursblöcke und Fortbildungen für Pädagoginnen und Pädagogen, direkt in der Einrichtung.',
+    path: '/schulen',
+    orte: ['Purkersdorf', 'Pressbaum', 'Tullnerbach'],
+    zielgruppe: 'Kindergärten und Schulen'
+  }),
+]
+
+const faq = [
+  {
+    frage: 'Kommt Sissi in den Kindergarten oder in die Schule?',
+    antwort: 'Ja. Sissi kommt direkt in die Einrichtung – Yoga im vertrauten Umfeld senkt die Hemmschwelle für die Kinder.'
+  },
+  {
+    frage: 'Welche Formate gibt es für Bildungseinrichtungen?',
+    antwort: 'Einmalige Workshops zu einem Thema (z. B. als Projekttag), mehrteilige Kursblöcke über mehrere Wochen und Pädagogen-Workshops, in denen Erzieher:innen und Lehrer:innen Grundlagen des Kinderyogas für den Alltag lernen.'
+  },
+  {
+    frage: 'Welche Qualifikation hat Sissi?',
+    antwort: 'Sissi (Elisabeth Zehetner) ist ausgebildete Kinderyoga-Lehrerin und Traumapädagogin und hat nach der BAKIP Amstetten zehn Jahre als Kindergartenpädagogin in Wien gearbeitet.'
+  },
+  {
+    frage: 'Was kostet ein Workshop für unsere Einrichtung?',
+    antwort: 'Sissi erstellt für jede Einrichtung ein individuelles Angebot – einfach über das Kontaktformular anfragen.'
+  }
+]
 ---
 
-<SubpageLayout seoTitle="Yoga-Workshops für Kindergärten & Schulen im Wienerwald | Sissi" description="Kinderyoga-Workshops für Kindergärten und Schulen im Wienerwald: Bewegung, Konzentration und Entspannung für Gruppen, direkt vor Ort in Purkersdorf, Pressbaum und Tullnerbach." title="Workshops für Kindergärten & Schulen" hero="/images/Kinderyoga-64.JPG" heroAlt="Kinderyoga Workshop">
+<SubpageLayout seoTitle="Yoga-Workshops für Kindergärten & Schulen im Wienerwald | Sissi" description="Kinderyoga-Workshops für Kindergärten und Schulen im Wienerwald: Bewegung, Konzentration und Entspannung für Gruppen, direkt vor Ort in Purkersdorf, Pressbaum und Tullnerbach." title="Workshops für Kindergärten & Schulen" hero="/images/Kinderyoga-64.JPG" jsonLd={jsonLd} heroAlt="Kinderyoga Workshop">
 
   <div class="grid md:grid-cols-2 gap-12 items-start">
 
@@ -36,6 +67,8 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     </div>
 
   </div>
+
+  <Faq items={faq} />
 
   <!-- CTA -->
   <div class="mt-12 p-8 rounded-2xl text-center" style="background-color: var(--color-sissi-cream)">

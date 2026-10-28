@@ -106,26 +106,9 @@ const videoSegmente = [
     ],
   },
 ]
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  '@id': 'https://sissiyoga.at/#business',
-  name: 'Sissi – Familien Yogazeit',
-  description: 'Yoga im Wienerwald für Kinder, Familien und Erwachsene: Vinyasa, Sanftes Yoga, Schwangeren-, Mama-Baby-, Senioren- und Kinderyoga.',
-  url: 'https://sissiyoga.at/',
-  image: 'https://sissiyoga.at/images/Kinderyoga-64.JPG',
-  logo: 'https://sissiyoga.at/logos/logo-colored.png',
-  telephone: '+436604860304',
-  email: 'sissi.zehetner@gmail.com',
-  founder: { '@type': 'Person', name: 'Elisabeth Zehetner' },
-  areaServed: ['Purkersdorf', 'Pressbaum', 'Tullnerbach', 'Wienerwald'].map((name) => ({ '@type': 'Place', name })),
-  knowsAbout: ['Yoga', 'Vinyasa Yoga', 'Sanftes Yoga', 'Erwachsenenyoga', 'Kinderyoga', 'Familienyoga', 'Pränatal-Yoga', 'Postnatal-Yoga', 'Mama-Baby-Yoga', 'Seniorenyoga'],
-  sameAs: ['https://www.instagram.com/sissi.familien.yogazeit/'],
-}
 ---
 
-<Layout title="Yoga im Wienerwald für Kinder und Erwachsene | Sissi Familien Yogazeit" jsonLd={jsonLd}>
+<Layout title="Yoga im Wienerwald für Kinder und Erwachsene | Sissi Familien Yogazeit">
 
   <!-- HERO: Text links, Foto rechts (ohne Überlappung) -->
   <section class="hero">

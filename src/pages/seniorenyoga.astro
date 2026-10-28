@@ -1,8 +1,43 @@
 ---
 import SubpageLayout from '../layouts/SubpageLayout.astro'
+import Faq from '../components/Faq.astro'
+import { kurs } from '../data/seo'
+
+const jsonLd = [
+  kurs({
+    name: 'Seniorenyoga in Purkersdorf',
+    description: 'Sanftes Yoga für Seniorinnen und Senioren im Pfarrsaal Purkersdorf: Kräftigung, Beweglichkeit, Gleichgewicht, Beckenboden und Entspannung, mit Stuhl als Hilfsmittel.',
+    path: '/seniorenyoga',
+    orte: ['Purkersdorf'],
+    zielgruppe: 'Seniorinnen und Senioren'
+  }),
+]
+
+const faq = [
+  {
+    frage: 'Wo findet Seniorenyoga statt?',
+    antwort: 'Im Pfarrsaal Purkersdorf im Wienerwald.'
+  },
+  {
+    frage: 'Brauche ich Yoga-Erfahrung?',
+    antwort: 'Nein. Die Stunden sind für Einsteigerinnen und Einsteiger ebenso geeignet wie für Erfahrene, und die Übungen werden an die individuellen Bedürfnisse angepasst.'
+  },
+  {
+    frage: 'Muss ich mich auf den Boden legen können?',
+    antwort: 'Ein Stuhl steht immer als Hilfsmittel zur Verfügung, die Übungen werden individuell angepasst.'
+  },
+  {
+    frage: 'Was wird im Seniorenyoga geübt?',
+    antwort: 'Sanfte Übungen zur Stärkung der Muskeln und des Beckenbodens, für Beweglichkeit, Gleichgewicht und Koordination sowie Atemübungen und Entspannung.'
+  },
+  {
+    frage: 'Wie melde ich mich an?',
+    antwort: 'Über das Kontaktformular auf sissiyoga.at/kontakt, per E-Mail an sissi.zehetner@gmail.com oder telefonisch unter +43 660 4860304. Aktuelle Zeiten und Termine stehen im Stundenplan auf der Startseite.'
+  }
+]
 ---
 
-<SubpageLayout seoTitle="Seniorenyoga Purkersdorf | Sissi Familien Yogazeit" description="Sanftes Yoga für Seniorinnen und Senioren in Purkersdorf: Beweglichkeit, Gleichgewicht, Beckenboden und Entspannung im Wienerwald." title="Senioren Yoga" hero="/images/seniorenyoga-hero.jpg" heroAlt="Senioren Yoga" heroPosition="center 50%">
+<SubpageLayout seoTitle="Seniorenyoga Purkersdorf | Sissi Familien Yogazeit" description="Sanftes Yoga für Seniorinnen und Senioren in Purkersdorf: Beweglichkeit, Gleichgewicht, Beckenboden und Entspannung im Wienerwald." title="Senioren Yoga" hero="/images/seniorenyoga-hero.jpg" jsonLd={jsonLd} heroAlt="Senioren Yoga" heroPosition="center 50%">
 
   <div class="grid md:grid-cols-2 gap-12 items-start">
 
@@ -23,6 +58,8 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     </div>
 
   </div>
+
+  <Faq items={faq} />
 
   <!-- CTA -->
   <div class="mt-12 p-8 rounded-2xl text-center flex flex-col items-center gap-4" style="background-color: var(--color-sissi-cream)">

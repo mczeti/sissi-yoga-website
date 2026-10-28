@@ -1,0 +1,29 @@
+---
+// Häufige Fragen: sichtbar als aufklappbare Liste und als FAQPage-Schema für Such- und KI-Systeme.
+// Antworten nur mit Fakten, die auch sonst auf der Seite stehen.
+import { faqPage, type FaqItem } from '../data/seo'
+
+interface Props {
+  items: FaqItem[]
+  titel?: string
+}
+
+const { items, titel = 'Häufige Fragen' } = Astro.props
+const ld = { '@context': 'https://schema.org', ...faqPage(items) }
+---
+
+<section class="mt-12 max-w-3xl">
+  <p class="text-xs font-bold tracking-widest uppercase mb-4" style="color: var(--color-sissi-green)">{titel}</p>
+  <div class="flex flex-col gap-3">
+    {items.map(({ frage, antwort }) => (
+      <details class="group rounded-2xl px-6 py-4 bg-white shadow-sm">
+        <summary class="cursor-pointer list-none flex items-center justify-between gap-4 font-medium" style="color: var(--color-sissi-olive)">
+          <h3 class="text-base font-medium">{frage}</h3>
+          <span class="text-xl transition group-open:rotate-45" aria-hidden="true">+</span>
+        </summary>
+        <p class="mt-3 text-base leading-relaxed" style="color: var(--color-sissi-circle)">{antwort}</p>
+      </details>
+    ))}
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+</section>

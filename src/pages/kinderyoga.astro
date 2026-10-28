@@ -1,8 +1,43 @@
 ---
 import SubpageLayout from '../layouts/SubpageLayout.astro'
+import Faq from '../components/Faq.astro'
+import { kurs } from '../data/seo'
+
+const jsonLd = [
+  kurs({
+    name: 'Kinderyoga im Wienerwald',
+    description: 'Spielerisches Yoga für Kinder mit Geschichten, Bewegungsspielen und kindgerechter Entspannung: wöchentliche Semesterkurse in Gruppen von ca. 8–12 Kindern sowie Workshops.',
+    path: '/kinderyoga',
+    orte: ['Purkersdorf', 'Tullnerbach', 'Pressbaum'],
+    zielgruppe: 'Kinder'
+  }),
+]
+
+const faq = [
+  {
+    frage: 'Wie läuft eine Kinderyoga-Stunde bei Sissi ab?',
+    antwort: 'Jede Stunde beginnt mit einem Ritual, danach wärmen Bewegungs- und Laufspiele auf. Im Hauptteil werden Yoga-Asanas und Yoga-Spiele rund um eine Geschichte oder ein Thema erarbeitet, oft mit Materialien wie Yogakarten, Yogawürfel oder Schwungtuch. Zum Schluss gibt es eine kindgerechte Entspannung, etwa eine Massagegeschichte oder eine kurze Meditationsgeschichte.'
+  },
+  {
+    frage: 'Wie groß sind die Gruppen und wie lange dauert ein Kurs?',
+    antwort: 'Die Gruppen haben ca. 8–12 Kinder. Ein Kurs läuft ein Semester lang mit einer Einheit pro Woche.'
+  },
+  {
+    frage: 'Wo findet Kinderyoga statt?',
+    antwort: 'Kinderyoga-Kurse und -Workshops gibt es im Pfarrsaal Purkersdorf, Wald-Workshops für Kinder von 4 bis 9 Jahren in Tullnerbach-Lawies. Für Kindergärten und Schulen im Wienerwald kommt Sissi auch direkt in die Einrichtung.'
+  },
+  {
+    frage: 'Was bringt Kinderyoga?',
+    antwort: 'Kinderyoga fördert Gleichgewicht und innere Balance, macht mutig und kräftig und hilft Kindern, durch viel Bewegung leichter in einen entspannten Zustand zu finden, den sie auch in den Alltag mitnehmen können.'
+  },
+  {
+    frage: 'Wie melde ich mich an?',
+    antwort: 'Über das Kontaktformular auf sissiyoga.at/kontakt, per E-Mail an sissi.zehetner@gmail.com oder telefonisch unter +43 660 4860304. Aktuelle Zeiten und Termine stehen im Stundenplan auf der Startseite.'
+  }
+]
 ---
 
-<SubpageLayout seoTitle="Kinderyoga im Wienerwald – Purkersdorf, Pressbaum, Tullnerbach | Sissi" description="Kinderyoga im Wienerwald: spielerische Yogastunden mit Geschichten, Bewegung und Entspannung für Kinder in Purkersdorf, Pressbaum und Tullnerbach. Wöchentliche Kurse pro Semester." title="Kinderyoga im Wienerwald" hero="/images/kinder-oben.JPG" heroAlt="Kinderyoga mit Sissi">
+<SubpageLayout seoTitle="Kinderyoga im Wienerwald – Purkersdorf, Pressbaum, Tullnerbach | Sissi" description="Kinderyoga im Wienerwald: spielerische Yogastunden mit Geschichten, Bewegung und Entspannung für Kinder in Purkersdorf, Pressbaum und Tullnerbach. Wöchentliche Kurse pro Semester." title="Kinderyoga im Wienerwald" hero="/images/kinder-oben.JPG" jsonLd={jsonLd} heroAlt="Kinderyoga mit Sissi">
 
   <div class="grid md:grid-cols-2 gap-12 items-start">
 
@@ -39,6 +74,8 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     </div>
 
   </div>
+
+  <Faq items={faq} />
 
   <!-- CTA -->
   <div class="mt-12 p-8 rounded-2xl text-center flex flex-col items-center gap-4" style="background-color: var(--color-sissi-cream)">

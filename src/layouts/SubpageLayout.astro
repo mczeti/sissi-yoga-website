@@ -1,19 +1,21 @@
 ---
 import Layout from './Layout.astro'
+import { breadcrumb } from '../data/seo'
 
 interface Props {
   title: string
   seoTitle?: string
   description?: string
   noindex?: boolean
-  jsonLd?: Record<string, unknown>
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
   hero?: string
   heroAlt?: string
   heroPosition?: string
   heroFit?: 'cover' | 'contain'
 }
 
-const { title, seoTitle, description, noindex, jsonLd, hero, heroAlt, heroPosition = 'center center', heroFit = 'cover' } = Astro.props
+const { title, seoTitle, description, noindex, jsonLd = [], hero, heroAlt, heroPosition = 'center center', heroFit = 'cover' } = Astro.props
+const seitenLd = [breadcrumb(title, Astro.url.pathname), ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])]
 ---
 
 <Layout
@@ -21,7 +23,7 @@ const { title, seoTitle, description, noindex, jsonLd, hero, heroAlt, heroPositi
   description={description}
   image={hero}
   noindex={noindex}
-  jsonLd={jsonLd}
+  jsonLd={seitenLd}
 >
 
   <!-- Hero Bild -->

@@ -1,13 +1,14 @@
 ---
 import '../styles/global.css'
 import Nav from '../components/Nav.astro'
+import { website, business, person } from '../data/seo'
 
 interface Props {
   title?: string
   description?: string
   image?: string
   noindex?: boolean
-  jsonLd?: Record<string, unknown>
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
 }
 
 const {
@@ -20,6 +21,19 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href
 const imageUrl = new URL(image, Astro.site).href
+
+// Ein @graph pro Seite: Business, Person und Website überall, dazu die seitenspezifischen Knoten
+const seitenLd = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []).map(({ '@context': _, ...knoten }) => knoten)
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    website,
+    business,
+    person,
+    { '@type': 'WebPage', '@id': `${canonical}#webpage`, url: canonical, name: title, description, isPartOf: { '@id': website['@id'] }, about: { '@id': business['@id'] }, inLanguage: 'de-AT' },
+    ...seitenLd,
+  ],
+}
 ---
 
 <!doctype html>
@@ -42,7 +56,8 @@ const imageUrl = new URL(image, Astro.site).href
     <meta property="og:image" content={imageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-Zusammenfassung" />
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(graph)} />}
   </head>
   <body>
     <Nav />

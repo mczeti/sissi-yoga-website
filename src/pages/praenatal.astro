@@ -1,8 +1,46 @@
 ---
 import SubpageLayout from '../layouts/SubpageLayout.astro'
+import Faq from '../components/Faq.astro'
+import { kurs } from '../data/seo'
+
+const jsonLd = [
+  kurs({
+    name: 'Yoga in der Schwangerschaft',
+    description: 'Sanfte Übungen, Atemtechniken und Entspannung für werdende Mütter – stärkt, entspannt und bereitet auf die Geburt vor. In Pressbaum im Block oder als Drop-in, auch im Garten in Tullnerbach.',
+    path: '/praenatal',
+    orte: ['Pressbaum', 'Tullnerbach'],
+    zielgruppe: 'Schwangere'
+  }),
+  kurs({
+    name: 'Mama-Baby-Yoga',
+    description: 'Sanftes Yoga zur Rückbildung nach der Geburt, bei dem das Baby durch Berührungen, Massagen und gemeinsame Übungen Teil der Stunde ist.',
+    path: '/praenatal',
+    orte: ['Purkersdorf'],
+    zielgruppe: 'Mütter mit Baby'
+  }),
+]
+
+const faq = [
+  {
+    frage: 'Wo gibt es Schwangerenyoga im Wienerwald?',
+    antwort: 'Yoga in der Schwangerschaft unterrichtet Sissi im Stark Studio in Pressbaum, wahlweise im Block oder als Einzeleinheit (Drop-in), und als Yoga im Garten in Tullnerbach-Lawies.'
+  },
+  {
+    frage: 'Was bringt Yoga in der Schwangerschaft?',
+    antwort: 'Die sanften Übungen helfen, den veränderten Körper besser wahrzunehmen, Rückenschmerzen zu lindern und Kraft für die Geburt aufzubauen. Dazu kommen Atemtechniken, die auch während der Wehen helfen können.'
+  },
+  {
+    frage: 'Was ist Mama-Baby-Yoga und wo findet es statt?',
+    antwort: 'Mama-Baby-Yoga ist sanftes Yoga, das die Rückbildung nach der Geburt unterstützt und Gelassenheit im Babyalltag schenkt. Das Baby ist durch Berührungen, Massagen und gemeinsame Übungen Teil der Stunde. Die Kurse finden im Pfarrsaal Purkersdorf statt.'
+  },
+  {
+    frage: 'Wie melde ich mich an?',
+    antwort: 'Über das Kontaktformular auf sissiyoga.at/kontakt, per E-Mail an sissi.zehetner@gmail.com oder telefonisch unter +43 660 4860304. Aktuelle Zeiten und Termine stehen im Stundenplan auf der Startseite.'
+  }
+]
 ---
 
-<SubpageLayout seoTitle="Schwangerenyoga Pressbaum & Mama-Baby-Yoga Purkersdorf | Sissi Familien Yogazeit" description="Yoga in der Schwangerschaft in Pressbaum und Mama-Baby-Yoga in Purkersdorf: sanfte Übungen, Atmung und Entspannung für werdende und frischgebackene Mütter." title="Prä- & Postnatal Yoga" hero="/images/praenatal-hero.jpg" heroAlt="Prä und Postnatal Yoga">
+<SubpageLayout seoTitle="Schwangerenyoga Pressbaum & Mama-Baby-Yoga Purkersdorf | Sissi Familien Yogazeit" description="Yoga in der Schwangerschaft in Pressbaum und Mama-Baby-Yoga in Purkersdorf: sanfte Übungen, Atmung und Entspannung für werdende und frischgebackene Mütter." title="Prä- & Postnatal Yoga" hero="/images/praenatal-hero.jpg" jsonLd={jsonLd} heroAlt="Prä und Postnatal Yoga">
 
   <div class="flex flex-col gap-16">
 
@@ -37,6 +75,8 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
     </div>
 
   </div>
+
+  <Faq items={faq} />
 
   <!-- CTA -->
   <div class="mt-12 p-8 rounded-2xl text-center flex flex-col items-center gap-4" style="background-color: var(--color-sissi-cream)">
