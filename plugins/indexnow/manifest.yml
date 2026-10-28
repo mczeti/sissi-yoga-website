@@ -1,0 +1,6 @@
+name: indexnow
+inputs:
+  - name: key
+    description: IndexNow-Schlüssel (Datei public/<key>.txt muss existieren)
+  - name: host
+    description: Domain der Website

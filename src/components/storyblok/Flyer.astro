@@ -43,7 +43,7 @@ const Tag = clickable ? 'a' : 'div'
     <span class="inline-block text-[11px] font-semibold tracking-wide px-2.5 py-1 rounded-full mb-2" style={`color:${cat.color}; background: color-mix(in srgb, ${cat.color} 14%, white)`}>{cat.label}</span>
     {blok.titel && <p class="font-semibold text-sm" style="color: var(--color-sissi-olive)">{blok.titel}</p>}
     {blok.ausgebucht ? (
-      <a href="/kontakt" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
+      <a href="/kontakt/" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
     ) : (
       datum && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">{datePrefix.charAt(0).toUpperCase() + datePrefix.slice(1)} {datum}</p>
     )}

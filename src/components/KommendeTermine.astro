@@ -133,7 +133,7 @@ const counts = {
                   <span class="inline-block text-[10px] sm:text-[11px] font-semibold tracking-wide px-2 sm:px-2.5 py-1 rounded-full mb-2" style={`color:${g.color}; background: color-mix(in srgb, ${g.color} 14%, white)`}>{g.label}</span>
                   {f.titel && <p class="font-semibold text-xs sm:text-sm leading-snug" style="color: var(--color-sissi-olive)">{f.titel}</p>}
                   {f.ausgebucht ? (
-                    <a href="/kontakt" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
+                    <a href="/kontakt/" class="text-xs mt-1 inline-block font-medium" style="color: var(--color-sissi-green)">Warteliste – jetzt anfragen →</a>
                   ) : (
                     f.gueltig_ab && <p class="text-xs mt-1" style="color: var(--color-sissi-circle)">{datePrefix(f)} {fmtDate(f.gueltig_ab)}</p>
                   )}

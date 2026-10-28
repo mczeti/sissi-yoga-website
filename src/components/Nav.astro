@@ -1,15 +1,16 @@
 ---
 const links = [
-  { label: 'Kinderyoga',      href: '/kinderyoga' },
-  { label: 'Prä & Postnatal', href: '/praenatal' },
-  { label: 'Senioren Yoga',   href: '/seniorenyoga' },
-  { label: 'Schulen',         href: '/schulen' },
-  { label: 'Workshops',       href: '/workshops' },
-  { label: 'Über mich',       href: '/ueber-mich' },
-  { label: 'Kontakt',         href: '/kontakt' },
+  { label: 'Kinderyoga',      href: '/kinderyoga/' },
+  { label: 'Prä & Postnatal', href: '/praenatal/' },
+  { label: 'Senioren Yoga',   href: '/seniorenyoga/' },
+  { label: 'Schulen',         href: '/schulen/' },
+  { label: 'Workshops',       href: '/workshops/' },
+  { label: 'Über mich',       href: '/ueber-mich/' },
+  { label: 'Kontakt',         href: '/kontakt/' },
 ]
 
-const currentPath = Astro.url.pathname
+// Im Dev-Server oft ohne, im Build mit Slash am Ende
+const currentPath = Astro.url.pathname.replace(/\/?$/, '/')
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="navbar">

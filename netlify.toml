@@ -27,3 +27,10 @@
   for = "/video/*/poster.jpg"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# Nach jedem Produktions-Deploy alle Sitemap-URLs an IndexNow (Bing & Co.) melden
+[[plugins]]
+  package = "/plugins/indexnow"
+  [plugins.inputs]
+    key = "6043167b9b3a5a458056ea0033e73c16"
+    host = "sissiyoga.at"
