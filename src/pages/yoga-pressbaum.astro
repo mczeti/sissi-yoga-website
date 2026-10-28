@@ -1,8 +1,20 @@
 ---
 import SubpageLayout from '../layouts/SubpageLayout.astro'
+import OrteLinks from '../components/OrteLinks.astro'
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Yoga in Pressbaum',
+  serviceType: 'Yoga',
+  description: 'Vinyasa Yoga Flow, Slow Vinyasa mit Yoga Nidra und Yoga in der Schwangerschaft im Stark Studio in Pressbaum.',
+  url: 'https://sissiyoga.at/yoga-pressbaum/',
+  provider: { '@id': 'https://sissiyoga.at/#business' },
+  areaServed: { '@type': 'Place', name: 'Pressbaum' },
+}
 ---
 
-<SubpageLayout seoTitle="Yoga in Pressbaum – Vinyasa, Sanftes Yoga & Schwangerenyoga | Sissi" description="Yoga in Pressbaum im Stark Studio: Vinyasa Yoga Flow für alle Level, Sanftes Yoga mit Yoga Nidra und Meditation sowie Yoga in der Schwangerschaft – mit Sissi Familien Yogazeit." title="Yoga in Pressbaum" hero="/images/standort-pressbaum.jpg" heroAlt="Yoga-Standort Pressbaum" heroPosition="center 40%">
+<SubpageLayout seoTitle="Yoga in Pressbaum – Vinyasa, Slow Vinyasa & Schwangerenyoga | Sissi" description="Yoga in Pressbaum im Stark Studio: Vinyasa Yoga Flow für alle Level, Slow Vinyasa mit Yoga Nidra und Yoga in der Schwangerschaft – mit Sissi Familien Yogazeit." title="Yoga in Pressbaum" hero="/images/standort-pressbaum.jpg" heroAlt="Yoga-Standort Pressbaum" heroPosition="center 40%" jsonLd={jsonLd}>
 
   <div class="flex flex-col gap-10 max-w-3xl text-base leading-relaxed" style="color: var(--color-sissi-olive)">
 
@@ -12,20 +24,26 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
       <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Vinyasa Yoga Flow</h2>
       <p>Ein kraftvoller, fließender Yogastil, bei dem Bewegung und Atem im Einklang sind. Die Stunde ist für alle Level geeignet: Du kommst in Bewegung, baust Kraft auf und kannst am Ende wieder zur Ruhe kommen.</p>
     </div>
-
     <div class="flex flex-col gap-3">
-      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Sanftes Yoga & Yoga Nidra</h2>
-      <p>Sanftes Yoga mit Yoga Nidra und Meditation, auch in der Schwangerschaft geeignet. Ideal, wenn du Verspannungen lösen und zur Ruhe kommen möchtest.</p>
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Slow Vinyasa Yoga & Yoga Nidra</h2>
+      <p>Langsame, achtsame Bewegungen, Dehnung und Entspannung mit Yoga Nidra und Meditation. Ideal, wenn du Verspannungen lösen und zur Ruhe kommen möchtest.</p>
     </div>
-
     <div class="flex flex-col gap-3">
       <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Yoga in der Schwangerschaft</h2>
-      <p>Sanfte Übungen, Atmung und Entspannung für werdende Mamas – wahlweise im Block oder als Einzeleinheit (Drop-in).</p>
+      <p>Sanfte Übungen, Atmung und Entspannung für werdende Mamas in Pressbaum – wahlweise im Block oder als Einzeleinheit (Drop-in).</p>
+    </div>
+    <div class="flex flex-col gap-3">
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Workshops in Pressbaum</h2>
+      <p>Immer wieder gibt es besondere Termine, zum Beispiel Vinyasa-Workshops für Frauen mit Meditation, Yoga Nidra und gemeinsamem Basteln. Aktuelle Workshops findest du unter „Kommende Termine" auf der Startseite.</p>
     </div>
 
     <div class="flex flex-col gap-3">
-      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Workshops</h2>
-      <p>Immer wieder gibt es besondere Termine, zum Beispiel Vinyasa-Workshops für Frauen mit Meditation, Yoga Nidra und gemeinsamem Basteln. Aktuelle Workshops findest du unter Workshops und im Stundenplan.</p>
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Gut zu wissen</h2>
+      <ul class="list-disc pl-5 flex flex-col gap-2">
+      <li>Alle Level sind willkommen – du brauchst keine Vorerfahrung.</li>
+      <li>Die aktuellen Zeiten und Termine findest du im <a href="/#stundenplan" class="underline">Stundenplan</a>.</li>
+      <li>Anmeldung und Fragen: einfach über das <a href="/kontakt" class="underline">Kontaktformular</a>, per E-Mail oder telefonisch bei Sissi.</li>
+      </ul>
     </div>
 
   </div>
@@ -44,5 +62,7 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
       </a>
     </div>
   </div>
+
+  <OrteLinks aktuell="pressbaum" />
 
 </SubpageLayout>

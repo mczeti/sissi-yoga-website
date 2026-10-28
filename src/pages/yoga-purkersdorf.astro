@@ -1,8 +1,20 @@
 ---
 import SubpageLayout from '../layouts/SubpageLayout.astro'
+import OrteLinks from '../components/OrteLinks.astro'
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Yoga in Purkersdorf',
+  serviceType: 'Yoga',
+  description: 'Mama-Baby-Yoga, Seniorenyoga und Kinderyoga im Pfarrsaal Purkersdorf.',
+  url: 'https://sissiyoga.at/yoga-purkersdorf/',
+  provider: { '@id': 'https://sissiyoga.at/#business' },
+  areaServed: { '@type': 'Place', name: 'Purkersdorf' },
+}
 ---
 
-<SubpageLayout seoTitle="Yoga in Purkersdorf – Mama-Baby-Yoga, Seniorenyoga & Kinderyoga | Sissi" description="Yoga im Pfarrsaal Purkersdorf: Mama-Baby-Yoga zur Rückbildung, Yoga für Senioren, Kinderyoga-Workshops und Familienangebote mit Sissi Familien Yogazeit." title="Yoga in Purkersdorf" hero="/images/standort-purkersdorf.jpg" heroAlt="Yoga-Standort Purkersdorf" heroPosition="center 40%">
+<SubpageLayout seoTitle="Yoga in Purkersdorf – Mama-Baby-Yoga, Seniorenyoga & Kinderyoga | Sissi" description="Yoga im Pfarrsaal Purkersdorf: Mama-Baby-Yoga zur Rückbildung, Seniorenyoga, Kinderyoga und Workshops mit Sissi Familien Yogazeit." title="Yoga in Purkersdorf" hero="/images/standort-purkersdorf.jpg" heroAlt="Yoga-Standort Purkersdorf" heroPosition="center 40%" jsonLd={jsonLd}>
 
   <div class="flex flex-col gap-10 max-w-3xl text-base leading-relaxed" style="color: var(--color-sissi-olive)">
 
@@ -12,20 +24,22 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
       <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Mama-Baby-Yoga</h2>
       <p>Yoga zur Rückbildung nach der Geburt: Du findest zurück in deinen Körper, stärkst deine Mitte und verbringst entspannte Zeit mit deinem Baby.</p>
     </div>
-
     <div class="flex flex-col gap-3">
       <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Yoga für Senioren</h2>
       <p>Sanftes Yoga für einen beweglichen und agilen Körper: Wir stärken den Beckenboden, trainieren das Gleichgewicht und bringen mehr Stabilität in den Alltag.</p>
     </div>
-
     <div class="flex flex-col gap-3">
       <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Kinderyoga & Workshops</h2>
       <p>Spielerische Kinderyoga-Workshops mit Geschichten, Bewegungsspielen, Basteln und Entspannung, zum Beispiel in den Ferien.</p>
     </div>
 
     <div class="flex flex-col gap-3">
-      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Yoga in Tullnerbach</h2>
-      <p>In Tullnerbach/Lawies biete ich Wald-Workshops für Kinder und Yoga im Garten an. Die Termine findest du im Stundenplan.</p>
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Gut zu wissen</h2>
+      <ul class="list-disc pl-5 flex flex-col gap-2">
+      <li>Die Kurse finden im Pfarrsaal Purkersdorf statt.</li>
+      <li>Die aktuellen Zeiten und Termine findest du im <a href="/#stundenplan" class="underline">Stundenplan</a>.</li>
+      <li>Anmeldung und Fragen: einfach über das <a href="/kontakt" class="underline">Kontaktformular</a>, per E-Mail oder telefonisch bei Sissi.</li>
+      </ul>
     </div>
 
   </div>
@@ -44,5 +58,7 @@ import SubpageLayout from '../layouts/SubpageLayout.astro'
       </a>
     </div>
   </div>
+
+  <OrteLinks aktuell="purkersdorf" />
 
 </SubpageLayout>

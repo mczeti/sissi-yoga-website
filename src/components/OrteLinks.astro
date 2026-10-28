@@ -1,0 +1,25 @@
+---
+interface Props {
+  aktuell: 'pressbaum' | 'purkersdorf' | 'tullnerbach'
+}
+
+const { aktuell } = Astro.props
+
+const orte = [
+  { slug: 'pressbaum', name: 'Pressbaum', kurse: 'Vinyasa, Slow Vinyasa & Yoga Nidra, Schwangeren Yoga' },
+  { slug: 'purkersdorf', name: 'Purkersdorf', kurse: 'Mama-Baby-Yoga, Senioren Yoga, Kinderyoga' },
+  { slug: 'tullnerbach', name: 'Tullnerbach', kurse: 'Yoga im Garten, Wald-Workshops für Kinder' },
+].filter((ort) => ort.slug !== aktuell)
+---
+
+<div class="mt-12">
+  <p class="text-xs font-bold tracking-widest uppercase mb-4" style="color: var(--color-sissi-green)">Auch in der Nähe</p>
+  <div class="grid sm:grid-cols-2 gap-4">
+    {orte.map((ort) => (
+      <a href={`/yoga-${ort.slug}`} class="block p-6 rounded-2xl transition hover:scale-105" style="background-color: var(--color-sissi-cream)">
+        <h3 class="text-xl font-light" style="color: var(--color-sissi-olive)">Yoga in {ort.name}</h3>
+        <p class="text-sm mt-1" style="color: var(--color-sissi-circle)">{ort.kurse}</p>
+      </a>
+    ))}
+  </div>
+</div>

@@ -1,0 +1,64 @@
+---
+import SubpageLayout from '../layouts/SubpageLayout.astro'
+import OrteLinks from '../components/OrteLinks.astro'
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Yoga in Tullnerbach',
+  serviceType: 'Yoga',
+  description: 'Vinyasa Yoga und Schwangerenyoga im Garten sowie Wald-Workshops für Kinder in Tullnerbach-Lawies.',
+  url: 'https://sissiyoga.at/yoga-tullnerbach/',
+  provider: { '@id': 'https://sissiyoga.at/#business' },
+  areaServed: { '@type': 'Place', name: 'Tullnerbach' },
+}
+---
+
+<SubpageLayout seoTitle="Yoga in Tullnerbach – Vinyasa, Schwangerenyoga & Waldyoga | Sissi" description="Yoga in Tullnerbach: Vinyasa Yoga und Yoga in der Schwangerschaft im Garten sowie Wald-Workshops für Kinder in Tullnerbach-Lawies mit Sissi Familien Yogazeit." title="Yoga in Tullnerbach" hero="/images/yoga-im-garten.jpg" heroAlt="Yoga-Standort Tullnerbach" heroPosition="center 35%" jsonLd={jsonLd}>
+
+  <div class="flex flex-col gap-10 max-w-3xl text-base leading-relaxed" style="color: var(--color-sissi-olive)">
+
+    <p class="text-lg">In Tullnerbach-Lawies unterrichte ich Yoga mitten im Grünen: im Garten für Erwachsene und im Wald für Kinder.</p>
+
+    <div class="flex flex-col gap-3">
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Yoga im Garten</h2>
+      <p>Vinyasa Yoga und Yoga in der Schwangerschaft unter freiem Himmel: Wir bewegen uns im Rhythmus des Atems, spüren den Boden unter uns und kommen im Grünen zur Ruhe.</p>
+    </div>
+    <div class="flex flex-col gap-3">
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Wald-Workshops für Kinder</h2>
+      <p>Yoga im Wald für Kinder von 4 bis 9 Jahren: mit Geschichten, Bewegungsspielen und Naturmaterialien erleben die Kinder Yoga draußen mit allen Sinnen.</p>
+    </div>
+    <div class="flex flex-col gap-3">
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Mehr Yoga in der Umgebung</h2>
+      <p>Regelmäßige Abendkurse für Erwachsene gibt es auch in <a href="/yoga-pressbaum" class="underline">Pressbaum</a>, Kurse für Mamas mit Baby, Seniorinnen und Senioren und Kinder in <a href="/yoga-purkersdorf" class="underline">Purkersdorf</a>.</p>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <h2 class="text-2xl font-light" style="color: var(--color-sissi-olive)">Gut zu wissen</h2>
+      <ul class="list-disc pl-5 flex flex-col gap-2">
+      <li>Alle Level sind willkommen.</li>
+      <li>Die aktuellen Zeiten und Termine findest du im <a href="/#stundenplan" class="underline">Stundenplan</a>.</li>
+      <li>Anmeldung und Fragen: einfach über das <a href="/kontakt" class="underline">Kontaktformular</a>, per E-Mail oder telefonisch bei Sissi.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="mt-12 p-8 rounded-2xl text-center flex flex-col items-center gap-4" style="background-color: var(--color-sissi-cream)">
+    <p class="text-lg" style="color: var(--color-sissi-olive)">Interesse an Yoga in Tullnerbach?</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="/#stundenplan" class="inline-flex items-center gap-2 px-8 py-3 rounded-full font-medium border-2 transition hover:scale-105"
+         style="color: var(--color-sissi-olive); border-color: var(--color-sissi-olive)">
+        Aktuelle Termine
+      </a>
+      <a href="/kontakt" class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-white font-medium transition hover:scale-105"
+         style="background-color: var(--color-sissi-olive)">
+        Jetzt anfragen
+      </a>
+    </div>
+  </div>
+
+  <OrteLinks aktuell="tullnerbach" />
+
+</SubpageLayout>

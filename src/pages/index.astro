@@ -26,9 +26,10 @@ const zeigeKurspauseHinweis = new Date() < new Date('2026-09-29T00:00:00+02:00')
 const standorte = [
   {
     name: 'Tullnerbach',
-    kurse: ['Yoga im Garten'],
+    kurse: ['Vinyasa Yoga im Garten', 'Schwangeren Yoga im Garten', 'Wald-Workshops für Kinder'],
     foto: '/images/yoga-im-garten.jpg',
     fotoPosition: 'center center',
+    link: { label: 'Yoga in Tullnerbach', href: '/yoga-tullnerbach' },
   },
   {
     name: 'Pressbaum',
@@ -163,6 +164,33 @@ const jsonLd = {
     headline="Wähle deine Yogazeit"
     headlineSingle="Wähle deine Yogazeit"
   />
+
+  <!-- ÜBER DAS ANGEBOT (Text für Leser:innen und Suchmaschinen) -->
+  <section class="py-20 px-8 md:px-16" style="background-color: var(--color-sissi-cream)">
+    <div class="max-w-6xl mx-auto">
+      <div class="max-w-3xl mb-12">
+        <p class="text-xs font-bold tracking-widest uppercase mb-2" style="color: var(--color-sissi-green)">Yoga im Wienerwald</p>
+        <h2 class="text-4xl font-light mb-6" style="color: var(--color-sissi-olive)">Yoga für Erwachsene, Kinder und Familien</h2>
+        <p class="text-base leading-relaxed" style="color: var(--color-sissi-circle)">
+          Ich bin Sissi und unterrichte Yoga im Wienerwald – in Pressbaum, Purkersdorf und Tullnerbach. Für Erwachsene gibt es Vinyasa Yoga Flow für alle Level, Slow Vinyasa mit Yoga Nidra, Yoga in der Schwangerschaft und Seniorenyoga. Mamas kommen mit ihrem Baby zum Mama-Baby-Yoga, Kinder erleben Yoga spielerisch im Kinderyoga, im Wald und in Kindergärten und Schulen.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <a href="/yoga-pressbaum" class="block p-6 rounded-2xl bg-white transition hover:scale-105">
+          <h3 class="text-xl font-light mb-2" style="color: var(--color-sissi-olive)">Yoga in Pressbaum</h3>
+          <p class="text-sm leading-relaxed" style="color: var(--color-sissi-circle)">Vinyasa Yoga Flow, Slow Vinyasa &amp; Yoga Nidra und Yoga in der Schwangerschaft im Stark Studio.</p>
+        </a>
+        <a href="/yoga-purkersdorf" class="block p-6 rounded-2xl bg-white transition hover:scale-105">
+          <h3 class="text-xl font-light mb-2" style="color: var(--color-sissi-olive)">Yoga in Purkersdorf</h3>
+          <p class="text-sm leading-relaxed" style="color: var(--color-sissi-circle)">Mama-Baby-Yoga, Seniorenyoga und Kinderyoga im Pfarrsaal.</p>
+        </a>
+        <a href="/yoga-tullnerbach" class="block p-6 rounded-2xl bg-white transition hover:scale-105">
+          <h3 class="text-xl font-light mb-2" style="color: var(--color-sissi-olive)">Yoga in Tullnerbach</h3>
+          <p class="text-sm leading-relaxed" style="color: var(--color-sissi-circle)">Vinyasa und Schwangerenyoga im Garten sowie Wald-Workshops für Kinder.</p>
+        </a>
+      </div>
+    </div>
+  </section>
 
   <!-- HINWEIS: KURSPAUSE -->
   {zeigeKurspauseHinweis && (
