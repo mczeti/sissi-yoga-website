@@ -93,3 +93,15 @@ git checkout main && git merge feature/name && git branch -d feature/name && git
 ```
 
 `main` = stabiler Branch. Kein Gitflow.
+
+## Flyer-Automatik (Storyblok)
+
+Martin lädt einen Flyer (JPG/PNG/PDF) im Chat hoch bzw. legt ihn in `flyer-inbox/` (gitignored) → Claude:
+1. Flyer ansehen und daraus ableiten: **titel**, **datum** (Kurs-/Workshopbeginn, `YYYY-MM-DD`), **zielgruppe** (`kinder` | `erwachsene`), **typ** (`kurs` | `workshop`), ggf. `--featured`
+2. Werte kurz zur Bestätigung zeigen (`--dry-run`), dann veröffentlichen:
+   ```bash
+   node scripts/flyer-publish.mjs --datei flyer-inbox/x.jpg --titel "…" --datum 2027-01-12 --zielgruppe kinder --typ kurs [--featured] [--ausgebucht] [--slug …]
+   ```
+- Slug-Konvention: aus Titel (Umlaute → ae/oe/ue), bei Wiederholung Suffix wie `-11_26`
+- `.env`: `STORYBLOK_MANAGEMENT_TOKEN` (Personal Access Token) nötig
+- Live-Site: Storyblok-Webhook löst nach jedem Publish einen Netlify-Build aus → Flyer nach ~1–2 Min. auf sissiyoga.at (statische Site, Inhalte werden beim Build geholt)
